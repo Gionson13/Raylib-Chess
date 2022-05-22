@@ -11,6 +11,8 @@ workspace "Chess"
 
     filter { "configurations:Release" }
         optimize "On"
+
+    filter { "configurations:Release", "system:Windows" }
         linkoptions { "-static", "-static-libgcc", "-static-libstdc++" }
         links { "pthread" }
 
@@ -28,4 +30,11 @@ project "Chess"
     }
     libdirs { "Dependencies/Raylib/%{cfg.system}/lib" }
 
-    links { "raylib", "Winmm", "gdi32", "opengl32" }
+    filter { "system:Windows" }
+        links { "raylib", "Winmm", "gdi32", "opengl32" }
+    
+    filter { "system:Linux" }
+        links { "raylib" } -- , "m", "dl", "rt", "X11"
+
+    filter {}
+
