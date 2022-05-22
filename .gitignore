@@ -1,0 +1,9 @@
+/.cache
+/.vscode
+/bin
+/obj
+/compile_commands
+/Dependencies
+compile_commands.json
+Chess.make
+Makefile
