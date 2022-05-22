@@ -24,8 +24,8 @@ project "Chess"
     files "Chess/**"
 
     includedirs {
-        "Dependencies/Raylib/include" 
+        "Dependencies/Raylib/%{cfg.system}/include" 
     }
-    libdirs { "Dependencies/Raylib/lib" }
+    libdirs { "Dependencies/Raylib/%{cfg.system}/lib" }
 
     links { "raylib", "Winmm", "gdi32", "opengl32" }
