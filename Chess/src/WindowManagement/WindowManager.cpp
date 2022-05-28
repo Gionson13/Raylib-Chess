@@ -2,7 +2,6 @@
 
 #include "../ScreenManagement/ScreenManager.h"
 #include "../Utils/Logger.h"
-#include "../Utils/Timer.h"
 
 
 bool WindowManager::InitWindow(const std::string& title, int width, int height)
