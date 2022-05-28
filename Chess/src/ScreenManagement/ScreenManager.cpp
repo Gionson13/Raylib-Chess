@@ -38,10 +38,10 @@ namespace ScreenManager
             nextScreen = nullptr;
 
             currentScreen->Load();
+            LOG_INFO("Screen successfully loaded");
 
             IsInTransition = true;
             TransitionBeginTime = GetTime();
-            LOG_INFO("Screen successfully changed");
         }
     }
 

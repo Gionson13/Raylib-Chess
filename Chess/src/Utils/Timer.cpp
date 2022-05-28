@@ -13,5 +13,6 @@ ScopeTimer::ScopeTimer(std::string scopeName)
 ScopeTimer::~ScopeTimer()
 {
     double end = GetTime();
-    LOG_INFO(name + " took: " + std::to_string(end - startTime) + " sec");
+    LOG_INFO("{} took: {} sec", name, end - startTime);
+    // LOG_INFO(name + " took: " + std::to_string(end - startTime) + " sec");
 }

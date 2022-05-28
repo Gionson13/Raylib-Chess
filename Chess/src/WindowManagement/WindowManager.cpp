@@ -1,15 +1,29 @@
 #include "WindowManager.h"
 
 #include "../ScreenManagement/ScreenManager.h"
+#include "../Utils/Logger.h"
+#include "../Utils/Timer.h"
+
 
 bool WindowManager::InitWindow(const std::string& title, int width, int height)
 {
+    SetTraceLogLevel(LOG_WARNING);
+
     // SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     ::InitWindow(width, height, title.c_str());
     // MaximizeWindow();
     gameRunning = true;
 
-    return true;
+    if (IsWindowReady())
+    {
+        LOG_INFO("Window successfully created:\n\tTitle:\t{}\n\tSize: \t{}x{}", title.c_str(), width, height);
+        return true;
+    }
+    else
+    {
+        LOG_ERROR("Failed to create window");
+        return false;
+    }
 }
 
 void WindowManager::RunWindow()
@@ -28,6 +42,7 @@ void WindowManager::RunWindow()
     }
 
     ::CloseWindow();
+    LOG_INFO("Window closed successfully");
 }
 
 void WindowManager::CloseWindow()

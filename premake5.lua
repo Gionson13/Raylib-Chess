@@ -26,7 +26,8 @@ project "Chess"
     files "Chess/**"
 
     includedirs {
-        "Dependencies/Raylib/%{cfg.system}/include" 
+        "Dependencies/Raylib/%{cfg.system}/include",
+	"Dependencies/fmt/%{cfg.system}/include" 
     }
     libdirs { "Dependencies/Raylib/%{cfg.system}/lib" }
 
@@ -34,7 +35,7 @@ project "Chess"
         links { "raylib", "Winmm", "gdi32", "opengl32" }
     
     filter { "system:Linux" }
-        links { "raylib" } -- , "m", "dl", "rt", "X11"
+        links { "raylib", "fmt" } -- , "m", "dl", "rt", "X11"
 
     filter {}
 
