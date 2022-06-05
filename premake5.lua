@@ -27,9 +27,13 @@ project "Chess"
 
     includedirs {
         "Dependencies/Raylib/%{cfg.system}/include",
-    	"Dependencies/fmt/%{cfg.system}/include" 
+        "Dependencies/fmt/%{cfg.system}/include",
     }
-    libdirs { "Dependencies/Raylib/%{cfg.system}/lib" }
+
+    libdirs { 
+        "Dependencies/Raylib/%{cfg.system}/lib",
+        "Dependencies/fmt/%{cfg.system}/lib"
+    }
 
     filter { "system:Windows" }
         links { "raylib", "fmt", "Winmm", "gdi32", "opengl32" }
