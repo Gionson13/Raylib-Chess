@@ -2,6 +2,7 @@
 
 #include "../ScreenManagement/Screen.h"
 #include "../Utils/BannerAnimation.h"
+#include "../Particles/ParticleSystem.h"
 #include <iostream>
 #include <raylib.h>
 #include <unordered_map>
@@ -9,7 +10,6 @@
 
 // TODO: Polish 
 
-#define BOARD_SQUARE_SIZE 50
 
 struct Vector2i
 {
@@ -89,6 +89,8 @@ public:
     void RenderEndTransition(float time) override;
     bool IsEndTransitionDone(float time) override;
 
+    void OnResize();
+
     // Load a board from a .csv file
     void LoadBoard(std::string filename);
     void SaveBoard();
@@ -117,4 +119,9 @@ private:
     Vector2i selectedPiece = {-1, -1};
 
     BannerAnimation saveBanner;
+
+    ParticleSystem eatParticleSystem;
+    float particleTimer = 0.0f;
+
+    int boardSquareSize = 50; 
 };

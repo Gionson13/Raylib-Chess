@@ -7,6 +7,7 @@
 #include "../WindowManagement/WindowManager.h"
 #include "MenuScreen.h"
 
+#include <algorithm>
 #include <ctime>
 #include <fstream>
 #include <iomanip>
@@ -34,10 +35,11 @@ void GameScreen::Load()
     whitePiecesTexture = LoadTexture("Assets/Textures/WhitePieces.png");
     blackPiecesTexture = LoadTexture("Assets/Textures/BlackPieces.png");
     saveIconTexture = LoadTexture("Assets/Textures/icons-save.png");
-    boardX = (int)(GetScreenWidth() / 2 - 8 * BOARD_SQUARE_SIZE / 2);
-    boardY = (int)(GetScreenHeight() / 2 - 8 * BOARD_SQUARE_SIZE / 2);
 
-    saveBanner = BannerAnimation(4.0f, "SAVED", {(float)GetScreenWidth() + 100.0f, 70.0f}, {-100.0f, 70.0f}, 20, WHITE, RED);
+    SetTextureFilter(whitePiecesTexture, TEXTURE_FILTER_POINT);
+    SetTextureFilter(blackPiecesTexture, TEXTURE_FILTER_POINT);
+
+    OnResize();
 
     if (Globals::BoardFilePath.empty())
         LoadBoard("Assets/Boards/basic_board.csv");
@@ -48,6 +50,18 @@ void GameScreen::Load()
 
     board.whiteLegalMoves = GetLegalMoves(PieceColor::White, board);
     board.blackLegalMoves = GetLegalMoves(PieceColor::Black, board);
+
+    Particle particle;
+    particle.size = {8.0f, 8.0f};
+    particle.velocity = {80.0f, -75.0f};
+    particle.acceleration = {0.0f, 0.0f};
+    particle.rotation = PI / 2;
+    particle.rotationVelocity = 2.0f;
+    particle.rotationAcceleration = -1.64f;
+    particle.startColor = {177, 199, 206, 255};
+    particle.endColor = {53, 99, 97, 1};
+
+    eatParticleSystem = ParticleSystem(particle, {0.0f, 0.0f}, 2.0f, 0.04f, 0.41f, 2.0f * PI);
 }
 
 void GameScreen::Unload()
@@ -63,11 +77,25 @@ void GameScreen::Unload()
 
 void GameScreen::Update(float dt)
 {
+    if (IsWindowResized())
+        OnResize();
+
+    eatParticleSystem.Update(dt);
+    if (eatParticleSystem.IsEmitting())
+    {
+        particleTimer += dt;
+
+        if (particleTimer > 0.4f)
+        {
+            eatParticleSystem.StopEmitting();
+        }
+    }
+    
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
     {
         Vector2 mousePos = GetMousePosition();
-        Vector2 boardMousePos = {(mousePos.x - boardX) / BOARD_SQUARE_SIZE, (mousePos.y - boardY) / BOARD_SQUARE_SIZE};
-        if (CheckCollisionPointRec(mousePos, {(float)boardX, (float)boardY, 8 * BOARD_SQUARE_SIZE, 8 * BOARD_SQUARE_SIZE}))
+        Vector2 boardMousePos = {(mousePos.x - boardX) / boardSquareSize, (mousePos.y - boardY) / boardSquareSize};
+        if (CheckCollisionPointRec(mousePos, {(float)boardX, (float)boardY, 8.0f * boardSquareSize, 8.0f * boardSquareSize}))
         {
             Vector2i boardPosi = {(int)boardMousePos.x, (int)boardMousePos.y};
             if (selectedPiece.x == -1 && selectedPiece.y == -1 || board.board[boardPosi].first == (board.isWhiteTurn ? PieceColor::White : PieceColor::Black))
@@ -83,7 +111,7 @@ void GameScreen::Update(float dt)
     if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
     {
         Vector2 mousePos = GetMousePosition();
-        Vector2 boardMousePos = {(mousePos.x - boardX) / BOARD_SQUARE_SIZE, (mousePos.y - boardY) / BOARD_SQUARE_SIZE};
+        Vector2 boardMousePos = {(mousePos.x - boardX) / boardSquareSize, (mousePos.y - boardY) / boardSquareSize};
         if (CheckCollisionPointRec(mousePos, {0, 0, 50, 56}))
         {
             ScreenManager::ChangeScreen<MenuScreen>();
@@ -93,7 +121,7 @@ void GameScreen::Update(float dt)
             SaveBoard();
             saveBanner.Start();
         }
-        else if (!CheckCollisionPointRec(mousePos, {(float)boardX, (float)boardY, 8 * BOARD_SQUARE_SIZE, 8 * BOARD_SQUARE_SIZE}))
+        else if (!CheckCollisionPointRec(mousePos, {(float)boardX, (float)boardY, 8.0f * boardSquareSize, 8.0f * boardSquareSize}))
         {
             LOG_INFO("Out of board");
             selectedPiece = {-1, -1};
@@ -103,9 +131,19 @@ void GameScreen::Update(float dt)
             Vector2i movePos = {(int)boardMousePos.x, (int)boardMousePos.y};
             if (board.board[movePos].first != (board.isWhiteTurn ? PieceColor::White : PieceColor::Black))
             {
+                bool isEating = false;
                 LOG_INFO("Changing piece positionq");
+                if (board.board[movePos].first != PieceColor::NoColor)
+                    isEating = true;
                 if (MovePiece(selectedPiece, movePos, board))
                 {
+                    if (isEating)
+                    {
+                        particleTimer = 0.0f;
+                        eatParticleSystem.SetSpawnPosition({boardX + movePos.x * boardSquareSize + boardSquareSize / 2.0f, boardY + movePos.y * boardSquareSize + boardSquareSize / 2.0f});
+                        eatParticleSystem.StartEmitting();
+                    }
+
                     board.isWhiteTurn = !board.isWhiteTurn;
                     board.whiteLegalMoves.clear();
                     board.blackLegalMoves.clear();
@@ -126,6 +164,7 @@ void GameScreen::Render()
 {
     ClearBackground({51, 76, 76, 255});
     DrawBoard();
+    eatParticleSystem.Render();
     for (int y = 0; y < 8; y++)
         for (int x = 0; x < 8; x++)
             DrawPiece(x, y, board.board[{x, y}].second, board.board[{x, y}].first);
@@ -198,6 +237,20 @@ bool GameScreen::IsEndTransitionDone(float time)
     return time / 1.3f > 1.0f;
 }
 
+void GameScreen::OnResize()
+{
+    LOG_INFO("OnResize called");
+
+    if (GetScreenHeight() < GetScreenWidth())
+        boardSquareSize = (int)(GetScreenHeight() / 9.6f);
+    else
+        boardSquareSize = GetScreenWidth() / 16;
+
+    boardX = (int)(GetScreenWidth() / 2 - 8 * boardSquareSize / 2);
+    boardY = (int)(GetScreenHeight() / 2 - 8 * boardSquareSize / 2);
+
+    saveBanner = BannerAnimation(4.0f, "SAVED", {(float)GetScreenWidth() + 100.0f, 70.0f}, {-100.0f, 70.0f}, 20, WHITE, RED);
+}
 
 void GameScreen::LoadBoard(std::string filename)
 {
@@ -390,7 +443,7 @@ void GameScreen::SaveBoard()
 
 void GameScreen::DrawBoard()
 {
-    DrawRectangle(boardX - 1, boardY - 1, BOARD_SQUARE_SIZE * 8 + 2, BOARD_SQUARE_SIZE * 8 + 2, {54, 93, 201, 255});
+    DrawRectangle(boardX - 1, boardY - 1, boardSquareSize * 8 + 2, boardSquareSize * 8 + 2, {54, 93, 201, 255});
 
     for (int y = 0; y < 8; y++)
     {
@@ -405,7 +458,7 @@ void GameScreen::DrawBoard()
                 squareColor = {232, 232, 232, 255};
             else
                 squareColor = {13, 13, 13, 255};
-            DrawRectangle(boardX + x * BOARD_SQUARE_SIZE, boardY + y * BOARD_SQUARE_SIZE, BOARD_SQUARE_SIZE, BOARD_SQUARE_SIZE, squareColor);
+            DrawRectangle(boardX + x * boardSquareSize, boardY + y * boardSquareSize, boardSquareSize, boardSquareSize, squareColor);
         }
     }
 }
@@ -413,7 +466,7 @@ void GameScreen::DrawBoard()
 void GameScreen::DrawPiece(int x, int y, PieceType type, PieceColor color)
 {
     Rectangle sourceRect = {(int)type * 16.0f, 0.0f, 16.0f, 16.0f};
-    Rectangle destRect = {(float)(boardX + x * BOARD_SQUARE_SIZE), (float)(boardY + y * BOARD_SQUARE_SIZE), 48.0f, 48.0f};
+    Rectangle destRect = {(float)(boardX + x * boardSquareSize) + 2.0f, (float)(boardY + y * boardSquareSize), boardSquareSize - 4.0f, boardSquareSize - 4.0f};
     if (type != PieceType::None)
     {
         if (color == PieceColor::White)

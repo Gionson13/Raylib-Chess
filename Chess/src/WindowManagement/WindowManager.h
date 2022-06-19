@@ -5,7 +5,7 @@
 
 namespace WindowManager
 {
-    bool InitWindow(const std::string& title, int width, int height);
+    bool InitWindow(const std::string& title, int width, int height, bool resizable);
     void RunWindow();
     void CloseWindow();
 

@@ -4,11 +4,12 @@
 #include "../Utils/Logger.h"
 
 
-bool WindowManager::InitWindow(const std::string& title, int width, int height)
+bool WindowManager::InitWindow(const std::string& title, int width, int height, bool resizable)
 {
     SetTraceLogLevel(LOG_WARNING);
 
-    // SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+    if (resizable)
+        SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     ::InitWindow(width, height, title.c_str());
     // MaximizeWindow();
     gameRunning = true;
