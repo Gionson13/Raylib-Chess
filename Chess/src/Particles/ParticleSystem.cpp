@@ -5,7 +5,6 @@
 #include "../Utils/Logger.h"
 
 #include <iostream>
-#include <random>
 
 ParticleSystem::ParticleSystem()
 {
@@ -46,12 +45,12 @@ void ParticleSystem::Update(float dt)
         {
             Particle newParticle;
             newParticle.position = spawnPosition + spawnParticle.position;
-            newParticle.velocity = Vector2Rotate(spawnParticle.velocity, (((float)rand() / RAND_MAX) * spread - spread / 2.0f));
-            newParticle.velocity.x += newParticle.velocity.x * randomness * (((float)rand() / RAND_MAX) * 2.0f - 2.0f);
-            newParticle.velocity.y += newParticle.velocity.y * randomness * (((float)rand() / RAND_MAX)* 2.0f - 2.0f);
+            newParticle.velocity = Vector2Rotate(spawnParticle.velocity, random.GetFloat() * spread - spread / 2.0f);
+            newParticle.velocity.x += newParticle.velocity.x * randomness * random.GetRangef(-2.0f, 0.0f);
+            newParticle.velocity.y += newParticle.velocity.y * randomness * random.GetRangef(-2.0f, 0.0f);
             newParticle.acceleration = spawnParticle.acceleration;
             newParticle.rotation = spawnParticle.rotation;
-            newParticle.rotationVelocity = spawnParticle.rotationVelocity + spawnParticle.rotationVelocity * randomness * (((float)rand() / RAND_MAX) * 2.0f - 2.0f);
+            newParticle.rotationVelocity = spawnParticle.rotationVelocity + spawnParticle.rotationVelocity * randomness * random.GetRangef(-2.0f, 0.0f);
             newParticle.rotationAcceleration = spawnParticle.rotationAcceleration;
             newParticle.size = spawnParticle.size;
             newParticle.startColor = spawnParticle.startColor;

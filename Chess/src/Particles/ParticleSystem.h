@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "Particle.h"
+#include "../Utils/Random.h"
 
 class ParticleSystem
 {
@@ -52,5 +53,7 @@ private:
     float spread;
 
     bool emitting = false;
+
+    Random random;
 
 };
