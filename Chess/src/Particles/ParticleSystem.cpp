@@ -5,6 +5,7 @@
 #include "../Utils/Logger.h"
 
 #include <iostream>
+#include <random>
 
 ParticleSystem::ParticleSystem()
 {
@@ -12,8 +13,8 @@ ParticleSystem::ParticleSystem()
 }
 
 
-ParticleSystem::ParticleSystem(Particle particle, Vector2 position, float lifetime, float interval, float randomness, float spread) : 
-    spawnParticle(particle), spawnPosition(position), particleLifetime(lifetime), spawnInterval(interval), randomness(randomness), spread(spread)
+ParticleSystem::ParticleSystem(Particle particle, Vector2 acceleration, float rotationAcceleration, Color startColor, Color endColor, Vector2 particleSize,  Vector2 position, float lifetime, float interval, float randomness, float spread) : 
+    spawnParticle(particle), particleAcceleration(acceleration), particleRotationAcceleration(rotationAcceleration), startColor(startColor), endColor(endColor), particleSize(particleSize), spawnPosition(position), particleLifetime(lifetime), spawnInterval(interval), randomness(randomness), spread(spread)
 {
 
 }
@@ -30,10 +31,10 @@ void ParticleSystem::Update(float dt)
             continue;
         }
 
-        particles[i].velocity += particles[i].acceleration * dt;
+        particles[i].velocity += particleAcceleration * dt;
         particles[i].position += particles[i].velocity * dt;
 
-        particles[i].rotationVelocity += particles[i].rotationAcceleration * dt;
+        particles[i].rotationVelocity += particleRotationAcceleration * dt;
         particles[i].rotation += particles[i].rotationVelocity * dt;
     }
 
@@ -48,13 +49,8 @@ void ParticleSystem::Update(float dt)
             newParticle.velocity = Vector2Rotate(spawnParticle.velocity, random.GetFloat() * spread - spread / 2.0f);
             newParticle.velocity.x += newParticle.velocity.x * randomness * random.GetRangef(-2.0f, 0.0f);
             newParticle.velocity.y += newParticle.velocity.y * randomness * random.GetRangef(-2.0f, 0.0f);
-            newParticle.acceleration = spawnParticle.acceleration;
             newParticle.rotation = spawnParticle.rotation;
             newParticle.rotationVelocity = spawnParticle.rotationVelocity + spawnParticle.rotationVelocity * randomness * random.GetRangef(-2.0f, 0.0f);
-            newParticle.rotationAcceleration = spawnParticle.rotationAcceleration;
-            newParticle.size = spawnParticle.size;
-            newParticle.startColor = spawnParticle.startColor;
-            newParticle.endColor = spawnParticle.endColor;
             particles.emplace_back(newParticle);
 
             spawnTimer -= spawnInterval;
@@ -67,9 +63,9 @@ void ParticleSystem::Render()
     for (Particle particle : particles)
     {
         float lifeProgress = particle.life / particleLifetime;
-        Rectangle rect = {particle.position.x, particle.position.y, particle.size.x, particle.size.y};
-        Color color = LerpColor(particle.startColor, particle.endColor, lifeProgress); 
-        DrawRectanglePro(rect, {particle.size.x / 2, particle.size.y / 2}, RAD2DEG * particle.rotation, color);
+        Rectangle rect = {particle.position.x, particle.position.y, particleSize.x, particleSize.y};
+        Color color = LerpColor(startColor, endColor, lifeProgress); 
+        DrawRectanglePro(rect, {particleSize.x / 2, particleSize.y / 2}, RAD2DEG * particle.rotation, color);
     }
 }
 
@@ -113,6 +109,26 @@ void ParticleSystem::SetSpawnPosition(Vector2 position)
     spawnPosition = position;
 }
 
+Vector2 ParticleSystem::GetParticleAcceleration()
+{
+    return particleAcceleration;
+}
+
+void ParticleSystem::SetParticleAcceleration(Vector2 acceleration)
+{
+    particleAcceleration = acceleration;
+}
+
+float ParticleSystem::GetParticleRotationAcceleration()
+{
+    return particleRotationAcceleration;
+}
+
+void ParticleSystem::SetParticleRotationAcceleration(float acceleration)
+{
+    particleRotationAcceleration = acceleration;
+}
+
 float ParticleSystem::GetRandomness()
 {
     return randomness;
@@ -151,6 +167,35 @@ float ParticleSystem::GetSpawnInterval()
 void ParticleSystem::SetSpawnInterval(float interval)
 {
     spawnInterval = interval;
+}
+
+Color ParticleSystem::GetStartColor()
+{
+    return startColor;
+}
+
+void ParticleSystem::SetStartColor(Color color)
+{
+    startColor = color;
+}
+
+Color ParticleSystem::GetEndColor()
+{
+    return endColor;
+}
+void ParticleSystem::SetEndColor(Color color)
+{
+    endColor = color;
+}
+
+Vector2 ParticleSystem::GetParticleSize()
+{
+    return particleSize;
+}
+
+void ParticleSystem::SetParticleSize(Vector2 size)
+{
+    particleSize = size;
 }
 
 void ParticleSystem::ClearParticles()

@@ -10,7 +10,7 @@ class ParticleSystem
 {
 public:
     ParticleSystem();
-    ParticleSystem(Particle particle, Vector2 position, float lifetime, float interval, float randomness, float spread);
+    ParticleSystem(Particle particle, Vector2 acceleration, float rotationAcceleration, Color startColor, Color endColor, Vector2 particleSize, Vector2 position, float lifetime, float interval, float randomness, float spread);
     void Update(float dt);
     void Render();
 
@@ -25,6 +25,12 @@ public:
     Vector2 GetSpawnPosition();
     void SetSpawnPosition(Vector2 position);
 
+    Vector2 GetParticleAcceleration();
+    void SetParticleAcceleration(Vector2 acceleration);
+
+    float GetParticleRotationAcceleration();
+    void SetParticleRotationAcceleration(float acceleration);
+    
     float GetRandomness();
     void SetRandomness(float randomness);
 
@@ -37,6 +43,15 @@ public:
     float GetSpawnInterval();
     void SetSpawnInterval(float interval);
 
+    Color GetStartColor();
+    void SetStartColor(Color color);
+
+    Color GetEndColor();
+    void SetEndColor(Color color);
+
+    Vector2 GetParticleSize();
+    void SetParticleSize(Vector2 size);
+
     void ClearParticles();
 
 private:
@@ -48,12 +63,19 @@ private:
     float spawnTimer = 0.0f;
 
     Particle spawnParticle;
+
+    Vector2 particleAcceleration;
+    float particleRotationAcceleration;
+
+    Color startColor;
+    Color endColor;
+    Vector2 particleSize;
+
     Vector2 spawnPosition;
     float randomness;
     float spread;
 
     bool emitting = false;
-
+    
     Random random;
-
 };

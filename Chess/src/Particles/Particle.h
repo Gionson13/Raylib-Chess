@@ -11,12 +11,6 @@ struct Particle
 
     Vector2 position;
     Vector2 velocity;
-    Vector2 acceleration;
     float rotation;
     float rotationVelocity;
-    float rotationAcceleration;
-
-    Color startColor;
-    Color endColor;
-    Vector2 size;
 };

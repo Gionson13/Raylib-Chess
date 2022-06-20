@@ -52,16 +52,11 @@ void GameScreen::Load()
     board.blackLegalMoves = GetLegalMoves(PieceColor::Black, board);
 
     Particle particle;
-    particle.size = {8.0f, 8.0f};
     particle.velocity = {80.0f, -75.0f};
-    particle.acceleration = {0.0f, 0.0f};
     particle.rotation = PI / 2;
     particle.rotationVelocity = 2.0f;
-    particle.rotationAcceleration = -1.64f;
-    particle.startColor = {177, 199, 206, 255};
-    particle.endColor = {53, 99, 97, 1};
 
-    eatParticleSystem = ParticleSystem(particle, {0.0f, 0.0f}, 2.0f, 0.04f, 0.41f, 2.0f * PI);
+    eatParticleSystem = ParticleSystem(particle, {0.0f, 0.0f}, -1.64f, {177, 199, 206, 255}, {53, 99, 97, 1}, {8.0f, 8.0f}, {0.0f, 0.0f}, 2.0f, 0.04f, 0.41f, 2.0f * PI);
 }
 
 void GameScreen::Unload()
