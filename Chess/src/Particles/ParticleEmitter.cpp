@@ -1,4 +1,4 @@
-#include "ParticleSystem.h"
+#include "ParticleEmitter.h"
 
 #include <raymath.h>
 #include "../Utils/MathExtension.h"
@@ -7,20 +7,19 @@
 #include <iostream>
 #include <random>
 
-ParticleSystem::ParticleSystem()
+ParticleEmitter::ParticleEmitter()
 {
-    
 }
 
 
-ParticleSystem::ParticleSystem(Particle particle, Vector2 acceleration, float rotationAcceleration, Color startColor, Color endColor, Vector2 particleSize,  Vector2 position, float lifetime, float interval, float randomness, float spread) : 
+ParticleEmitter::ParticleEmitter(Particle particle, Vector2 acceleration, float rotationAcceleration, Color startColor, Color endColor, Vector2 particleSize,  Vector2 position, float lifetime, float interval, float randomness, float spread) : 
     spawnParticle(particle), particleAcceleration(acceleration), particleRotationAcceleration(rotationAcceleration), startColor(startColor), endColor(endColor), particleSize(particleSize), spawnPosition(position), particleLifetime(lifetime), spawnInterval(interval), randomness(randomness), spread(spread)
 {
 
 }
 
 
-void ParticleSystem::Update(float dt)
+void ParticleEmitter::Update(float dt)
 {
     for (int i = particles.size() - 1; i > -1; i--)
     {
@@ -58,7 +57,7 @@ void ParticleSystem::Update(float dt)
     }
 }
 
-void ParticleSystem::Render()
+void ParticleEmitter::Render()
 {
     for (Particle particle : particles)
     {
@@ -69,136 +68,136 @@ void ParticleSystem::Render()
     }
 }
 
-void ParticleSystem::StartEmitting()
+void ParticleEmitter::StartEmitting()
 {
     emitting = true;
 }
 
-void ParticleSystem::StopEmitting()
+void ParticleEmitter::StopEmitting()
 {
     emitting = false;
 }
 
-void ParticleSystem::ToggleEmitting()
+void ParticleEmitter::ToggleEmitting()
 {
     emitting = !emitting;
 }
 
-bool ParticleSystem::IsEmitting()
+bool ParticleEmitter::IsEmitting()
 {
     return emitting;
 }
 
-Particle ParticleSystem::GetSpawnParticle()
+Particle ParticleEmitter::GetSpawnParticle()
 {
     return spawnParticle;
 }
 
-void ParticleSystem::SetSpawnParticle(Particle particle)
+void ParticleEmitter::SetSpawnParticle(Particle particle)
 {
     spawnParticle = particle;
 }
 
-Vector2 ParticleSystem::GetSpawnPosition()
+Vector2 ParticleEmitter::GetSpawnPosition()
 {
     return spawnPosition;
 }
 
-void ParticleSystem::SetSpawnPosition(Vector2 position)
+void ParticleEmitter::SetSpawnPosition(Vector2 position)
 {
     spawnPosition = position;
 }
 
-Vector2 ParticleSystem::GetParticleAcceleration()
+Vector2 ParticleEmitter::GetParticleAcceleration()
 {
     return particleAcceleration;
 }
 
-void ParticleSystem::SetParticleAcceleration(Vector2 acceleration)
+void ParticleEmitter::SetParticleAcceleration(Vector2 acceleration)
 {
     particleAcceleration = acceleration;
 }
 
-float ParticleSystem::GetParticleRotationAcceleration()
+float ParticleEmitter::GetParticleRotationAcceleration()
 {
     return particleRotationAcceleration;
 }
 
-void ParticleSystem::SetParticleRotationAcceleration(float acceleration)
+void ParticleEmitter::SetParticleRotationAcceleration(float acceleration)
 {
     particleRotationAcceleration = acceleration;
 }
 
-float ParticleSystem::GetRandomness()
+float ParticleEmitter::GetRandomness()
 {
     return randomness;
 }
 
-void ParticleSystem::SetRandomness(float randomValue)
+void ParticleEmitter::SetRandomness(float randomValue)
 {
     randomness = randomValue;
 }
 
-float ParticleSystem::GetSpread()
+float ParticleEmitter::GetSpread()
 {
     return spread;
 }
 
-void ParticleSystem::SetSpread(float spradValue)
+void ParticleEmitter::SetSpread(float spradValue)
 {
     spread = spradValue;
 }
 
-float ParticleSystem::GetParticleLifetime()
+float ParticleEmitter::GetParticleLifetime()
 {
     return particleLifetime;
 }
 
-void ParticleSystem::SetParticleLifetime(float lifetime)
+void ParticleEmitter::SetParticleLifetime(float lifetime)
 {
     particleLifetime = lifetime;
 }
 
-float ParticleSystem::GetSpawnInterval()
+float ParticleEmitter::GetSpawnInterval()
 {
     return spawnInterval;
 }
 
-void ParticleSystem::SetSpawnInterval(float interval)
+void ParticleEmitter::SetSpawnInterval(float interval)
 {
     spawnInterval = interval;
 }
 
-Color ParticleSystem::GetStartColor()
+Color ParticleEmitter::GetStartColor()
 {
     return startColor;
 }
 
-void ParticleSystem::SetStartColor(Color color)
+void ParticleEmitter::SetStartColor(Color color)
 {
     startColor = color;
 }
 
-Color ParticleSystem::GetEndColor()
+Color ParticleEmitter::GetEndColor()
 {
     return endColor;
 }
-void ParticleSystem::SetEndColor(Color color)
+void ParticleEmitter::SetEndColor(Color color)
 {
     endColor = color;
 }
 
-Vector2 ParticleSystem::GetParticleSize()
+Vector2 ParticleEmitter::GetParticleSize()
 {
     return particleSize;
 }
 
-void ParticleSystem::SetParticleSize(Vector2 size)
+void ParticleEmitter::SetParticleSize(Vector2 size)
 {
     particleSize = size;
 }
 
-void ParticleSystem::ClearParticles()
+void ParticleEmitter::ClearParticles()
 {
     particles.clear();
 }

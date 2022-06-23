@@ -2,7 +2,7 @@
 
 #include "../ScreenManagement/Screen.h"
 #include "../Utils/BannerAnimation.h"
-#include "../Particles/ParticleSystem.h"
+#include "../Particles/ParticleEmitter.h"
 #include <iostream>
 #include <raylib.h>
 #include <unordered_map>
@@ -120,7 +120,7 @@ private:
 
     BannerAnimation saveBanner;
 
-    ParticleSystem eatParticleSystem;
+    ParticleEmitter eatParticleEmitter;
     float particleTimer = 0.0f;
 
     int boardSquareSize = 50; 

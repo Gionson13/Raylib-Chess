@@ -56,7 +56,7 @@ void GameScreen::Load()
     particle.rotation = PI / 2;
     particle.rotationVelocity = 2.0f;
 
-    eatParticleSystem = ParticleSystem(particle, {0.0f, 0.0f}, -1.64f, {177, 199, 206, 255}, {53, 99, 97, 1}, {8.0f, 8.0f}, {0.0f, 0.0f}, 2.0f, 0.04f, 0.41f, 2.0f * PI);
+    eatParticleEmitter = ParticleEmitter(particle, {0.0f, 0.0f}, -1.64f, {177, 199, 206, 255}, {53, 99, 97, 1}, {8.0f, 8.0f}, {0.0f, 0.0f}, 2.0f, 0.04f, 0.41f, 2.0f * PI);
 }
 
 void GameScreen::Unload()
@@ -75,14 +75,14 @@ void GameScreen::Update(float dt)
     if (IsWindowResized())
         OnResize();
 
-    eatParticleSystem.Update(dt);
-    if (eatParticleSystem.IsEmitting())
+    eatParticleEmitter.Update(dt);
+    if (eatParticleEmitter.IsEmitting())
     {
         particleTimer += dt;
 
         if (particleTimer > 0.4f)
         {
-            eatParticleSystem.StopEmitting();
+            eatParticleEmitter.StopEmitting();
         }
     }
     
@@ -135,8 +135,8 @@ void GameScreen::Update(float dt)
                     if (isEating)
                     {
                         particleTimer = 0.0f;
-                        eatParticleSystem.SetSpawnPosition({boardX + movePos.x * boardSquareSize + boardSquareSize / 2.0f, boardY + movePos.y * boardSquareSize + boardSquareSize / 2.0f});
-                        eatParticleSystem.StartEmitting();
+                        eatParticleEmitter.SetSpawnPosition({boardX + movePos.x * boardSquareSize + boardSquareSize / 2.0f, boardY + movePos.y * boardSquareSize + boardSquareSize / 2.0f});
+                        eatParticleEmitter.StartEmitting();
                     }
 
                     board.isWhiteTurn = !board.isWhiteTurn;
@@ -159,7 +159,7 @@ void GameScreen::Render()
 {
     ClearBackground({51, 76, 76, 255});
     DrawBoard();
-    eatParticleSystem.Render();
+    eatParticleEmitter.Render();
     for (int y = 0; y < 8; y++)
         for (int x = 0; x < 8; x++)
             DrawPiece(x, y, board.board[{x, y}].second, board.board[{x, y}].first);

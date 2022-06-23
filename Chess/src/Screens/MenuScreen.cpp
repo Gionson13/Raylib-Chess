@@ -92,7 +92,7 @@ void MenuScreen::RenderEndTransition(float time)
     for (int i = 0; i < 6; i++)
     {
         if (i % 2 == 0)
-            DrawRectangle(0, (int)(i * GetScreenHeight() / 6), (int)(x * GetScreenWidth()), (int)(GetScreenHeight() / 6), BLACK);
+            DrawRectangle(0, (int)(i * GetScreenHeight() / 6), (int)(x * GetScreenWidth()), (int)(GetScreenHeight() / 6) + 1, BLACK);
         else
             DrawRectangle(GetScreenWidth() - (int)(x * GetScreenWidth()), (int)(i * GetScreenHeight() / 6), (int)(x * GetScreenWidth()), (int)(GetScreenHeight() / 6) + 1, BLACK);
     }

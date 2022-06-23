@@ -6,11 +6,11 @@
 #include "Particle.h"
 #include "../Utils/Random.h"
 
-class ParticleSystem
+class ParticleEmitter
 {
 public:
-    ParticleSystem();
-    ParticleSystem(Particle particle, Vector2 acceleration, float rotationAcceleration, Color startColor, Color endColor, Vector2 particleSize, Vector2 position, float lifetime, float interval, float randomness, float spread);
+    ParticleEmitter();
+    ParticleEmitter(Particle particle, Vector2 acceleration, float rotationAcceleration, Color startColor, Color endColor, Vector2 particleSize, Vector2 position, float lifetime, float interval, float randomness, float spread);
     void Update(float dt);
     void Render();
 
