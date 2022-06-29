@@ -41,19 +41,15 @@ void ParticleEmitter::Update(float dt)
     if (emitting)
     {
         spawnTimer += dt;
+        int emitCount = 0;
         while (spawnTimer > spawnInterval)
         {
-            Particle newParticle;
-            newParticle.position = spawnPosition + spawnParticle.position;
-            newParticle.velocity = Vector2Rotate(spawnParticle.velocity, random.GetFloat() * spread - spread / 2.0f);
-            newParticle.velocity.x += newParticle.velocity.x * randomness * random.GetRangef(-2.0f, 0.0f);
-            newParticle.velocity.y += newParticle.velocity.y * randomness * random.GetRangef(-2.0f, 0.0f);
-            newParticle.rotation = spawnParticle.rotation;
-            newParticle.rotationVelocity = spawnParticle.rotationVelocity + spawnParticle.rotationVelocity * randomness * random.GetRangef(-2.0f, 0.0f);
-            particles.emplace_back(newParticle);
-
+            emitCount++;
             spawnTimer -= spawnInterval;
         }
+
+        if (emitCount > 0)
+            EmitNow(emitCount);
     }
 }
 
@@ -86,6 +82,21 @@ void ParticleEmitter::ToggleEmitting()
 bool ParticleEmitter::IsEmitting()
 {
     return emitting;
+}
+
+void ParticleEmitter::EmitNow(int quantity)
+{
+    for (int i = 0; i < quantity; i++)
+    {   
+        Particle newParticle;
+        newParticle.position = spawnPosition + spawnParticle.position;
+        newParticle.velocity = Vector2Rotate(spawnParticle.velocity, random.GetFloat() * spread - spread / 2.0f);
+        newParticle.velocity.x += newParticle.velocity.x * randomness * random.GetRangef(-2.0f, 0.0f);
+        newParticle.velocity.y += newParticle.velocity.y * randomness * random.GetRangef(-2.0f, 0.0f);
+        newParticle.rotation = spawnParticle.rotation;
+        newParticle.rotationVelocity = spawnParticle.rotationVelocity + spawnParticle.rotationVelocity * randomness * random.GetRangef(-2.0f, 0.0f);
+        particles.emplace_back(newParticle);
+    }
 }
 
 Particle ParticleEmitter::GetSpawnParticle()
@@ -195,6 +206,11 @@ Vector2 ParticleEmitter::GetParticleSize()
 void ParticleEmitter::SetParticleSize(Vector2 size)
 {
     particleSize = size;
+}
+
+float ParticleEmitter::GetParticleCount()
+{
+    return particles.size();
 }
 
 void ParticleEmitter::ClearParticles()

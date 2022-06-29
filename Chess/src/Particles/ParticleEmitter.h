@@ -18,6 +18,7 @@ public:
     void StopEmitting();
     void ToggleEmitting();
     bool IsEmitting();
+    void EmitNow(int quantity);
 
     Particle GetSpawnParticle();
     void SetSpawnParticle(Particle particle);
@@ -52,6 +53,7 @@ public:
     Vector2 GetParticleSize();
     void SetParticleSize(Vector2 size);
 
+    float GetParticleCount();
     void ClearParticles();
 
 private:

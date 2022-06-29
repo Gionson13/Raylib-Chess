@@ -121,7 +121,6 @@ private:
     BannerAnimation saveBanner;
 
     ParticleEmitter eatParticleEmitter;
-    float particleTimer = 0.0f;
 
     int boardSquareSize = 50; 
 };

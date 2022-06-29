@@ -76,16 +76,7 @@ void GameScreen::Update(float dt)
         OnResize();
 
     eatParticleEmitter.Update(dt);
-    if (eatParticleEmitter.IsEmitting())
-    {
-        particleTimer += dt;
-
-        if (particleTimer > 0.4f)
-        {
-            eatParticleEmitter.StopEmitting();
-        }
-    }
-    
+        
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
     {
         Vector2 mousePos = GetMousePosition();
@@ -134,9 +125,8 @@ void GameScreen::Update(float dt)
                 {
                     if (isEating)
                     {
-                        particleTimer = 0.0f;
                         eatParticleEmitter.SetSpawnPosition({boardX + movePos.x * boardSquareSize + boardSquareSize / 2.0f, boardY + movePos.y * boardSquareSize + boardSquareSize / 2.0f});
-                        eatParticleEmitter.StartEmitting();
+                        eatParticleEmitter.EmitNow(16);
                     }
 
                     board.isWhiteTurn = !board.isWhiteTurn;
