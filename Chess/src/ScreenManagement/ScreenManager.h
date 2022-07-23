@@ -7,12 +7,12 @@
 
 namespace ScreenManager
 {
-    extern Screen* currentScreen;
-
-    extern Screen* nextScreen; // TODO: find a way to make these private
-    
-    extern bool IsInTransition;
-    extern float TransitionBeginTime;
+    // extern Screen* currentScreen;
+    //
+    // extern Screen* nextScreen; // TODO: find a way to make these private
+    // 
+    // extern bool IsInTransition;
+    // extern float TransitionBeginTime;
     // namespace
     // {
     //     bool IsInTransition = false;
@@ -25,14 +25,16 @@ namespace ScreenManager
     void UpdateScreenManager();
     void UpdateAndRenderTransitions();
 
-    template<typename T>
-    void ChangeScreen()
-    {
-        if (IsInTransition)
-            return;
+    // template<typename T>
+    // void ChangeScreen()
+    // {
+    //     if (IsInTransition)
+    //         return;
+    //
+    //     nextScreen = new T();
+    //     IsInTransition = true;
+    //     TransitionBeginTime = GetTime();
+    // }
 
-        nextScreen = new T();
-        IsInTransition = true;
-        TransitionBeginTime = GetTime();
-    }
+    void ChangeScreen(const Screen screen);
 } // namespace ScreenManager

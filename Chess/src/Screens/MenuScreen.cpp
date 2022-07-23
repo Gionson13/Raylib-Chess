@@ -15,19 +15,40 @@
 #define GUI_FILE_DIALOG_IMPLEMENTATION
 #include "../Utils/GuiFileDialog.h"
 
+namespace MenuScreen
+{
+    static Rectangle startRect;
+    static Rectangle loadRect;
+    static GuiFileDialogState fileDialogState;
 
-void MenuScreen::Load()
+    Screen GetScreen()
+    {
+        Screen screen;
+        screen.LoadFunction = &Load;
+        screen.UnloadFunction = &Unload;
+        screen.UpdateFunction = &Update;
+        screen.RenderFunction = &Render;
+        screen.IsEndTransitionDoneFunction = &IsEndTransitionDone;
+        screen.IsStartTransitionDoneFunction = &IsStartTransitionDone;
+        screen.RenderStartTransitionFunction = &RenderStartTransition;
+        screen.RenderEndTransitionFunction = &RenderEndTransition;
+
+        return screen;
+    }
+
+
+void Load()
 {
     startRect = {100, 200, 200, 50};
     loadRect = {100, 300, 200, 50};
     fileDialogState = InitGuiFileDialog(400, 300, (std::string(GetWorkingDirectory()) + "/Assets/Saves").c_str(), false);
 }
 
-void MenuScreen::Unload()
+void Unload()
 {
 }
 
-void MenuScreen::Update(float dt)
+void Update(float dt)
 {
     if (!fileDialogState.fileDialogActive)
     {
@@ -36,7 +57,7 @@ void MenuScreen::Update(float dt)
             Vector2 mousePos = GetMousePosition();
             if (CheckCollisionPointRec(mousePos, startRect))
             {
-                ScreenManager::ChangeScreen<GameScreen>();
+                ScreenManager::ChangeScreen(GameScreen::GetScreen());
             }
             else if (CheckCollisionPointRec(mousePos, loadRect))
             {
@@ -52,14 +73,14 @@ void MenuScreen::Update(float dt)
         {
             std::string fileName = TextFormat("%s/%s", fileDialogState.dirPathText, fileDialogState.fileNameText);
             Globals::BoardFilePath = fileName;
-            ScreenManager::ChangeScreen<GameScreen>();
+            ScreenManager::ChangeScreen(GameScreen::GetScreen());
         }
 
         fileDialogState.SelectFilePressed = false;
     }
 }
 
-void MenuScreen::Render()
+void Render()
 {
     ClearBackground({51, 76, 76, 255});
     DrawText("Chess", 100, 50, 50, WHITE);
@@ -71,19 +92,19 @@ void MenuScreen::Render()
     GuiFileDialog(&fileDialogState);
 }
 
-void MenuScreen::RenderStartTransition(float time)
+void RenderStartTransition(float time)
 {
     float progress = time / 1.3f;
     DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), {0, 0, 0, (unsigned char)(int)Lerp(255, 0, progress)});
 }
 
-bool MenuScreen::IsStartTransitionDone(float time)
+bool IsStartTransitionDone(float time)
 {
     return time / 1.3f > 1.0f;
 }
 
 
-void MenuScreen::RenderEndTransition(float time)
+void RenderEndTransition(float time)
 {
     float progress = time / 2.0f;
 
@@ -100,7 +121,9 @@ void MenuScreen::RenderEndTransition(float time)
 }
 
 
-bool MenuScreen::IsEndTransitionDone(float time)
+bool IsEndTransitionDone(float time)
 {
     return time / 2.2f > 1.0f;
 }
+
+} // namespace MenuScreen

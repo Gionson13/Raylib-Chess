@@ -6,7 +6,7 @@ int main()
 {
     if (WindowManager::InitWindow("Chess", 800, 480, true))
     {
-        ScreenManager::ChangeScreen<MenuScreen>();
+        ScreenManager::ChangeScreen(MenuScreen::GetScreen());
         WindowManager::RunWindow();
     }
 }

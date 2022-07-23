@@ -3,22 +3,25 @@
 
 namespace ScreenManager
 {
-    Screen* currentScreen = nullptr;
-    Screen* nextScreen = nullptr;
+    static Screen currentScreen;
+    static Screen nextScreen;
     
-    bool IsInTransition = false;
-    float TransitionBeginTime = 0.0f;
+    static bool IsInTransition = false;
+    static float TransitionBeginTime = 0.0f;
+
+    static bool ReturnTrue(float time) { return true; }
+    static void DoNothing(float time) {}
 
     void UpdateScreen()
     {
-        if (currentScreen)
-            currentScreen->Update(GetFrameTime());
+        if (currentScreen.UpdateFunction)
+            currentScreen.UpdateFunction(GetFrameTime());
     }
 
     void RenderScreen()
     {
-        if (currentScreen)
-            currentScreen->Render();
+        if (currentScreen.RenderFunction)
+            currentScreen.RenderFunction();
     }
 
     void UpdateScreenManager()
@@ -26,18 +29,29 @@ namespace ScreenManager
         if (IsInTransition)
             return;
 
-        if (nextScreen)
+        if (nextScreen.LoadFunction)
         {
-            if (currentScreen)
+            if (currentScreen.UnloadFunction)
             {
-                currentScreen->Unload();
-                delete currentScreen;
+                currentScreen.UnloadFunction();
+                // delete currentScreen;
             }
 
             currentScreen = nextScreen;
-            nextScreen = nullptr;
+            nextScreen = {};
 
-            currentScreen->Load();
+            currentScreen.LoadFunction();
+            
+            if (!currentScreen.IsStartTransitionDoneFunction)
+                currentScreen.IsStartTransitionDoneFunction = &ReturnTrue;
+            if (!currentScreen.IsEndTransitionDoneFunction)
+                currentScreen.IsEndTransitionDoneFunction = &ReturnTrue;
+
+            if (!currentScreen.RenderStartTransitionFunction)
+                currentScreen.RenderStartTransitionFunction = &DoNothing;
+            if (!currentScreen.RenderEndTransitionFunction)
+                currentScreen.RenderEndTransitionFunction = &DoNothing;
+
             LOG_INFO("Screen successfully loaded");
 
             IsInTransition = true;
@@ -50,16 +64,16 @@ namespace ScreenManager
         if (!IsInTransition)
             return;
 
-        if (nextScreen)
+        if (nextScreen.LoadFunction)
         {
-            if (currentScreen)
+            if (currentScreen.LoadFunction)
             {
                 float time = (float)GetTime() - TransitionBeginTime;
-                if (!currentScreen->IsEndTransitionDone(time)) 
-                    currentScreen->RenderEndTransition(time);
+                if (!currentScreen.IsEndTransitionDoneFunction(time)) 
+                    currentScreen.RenderEndTransitionFunction(time);
                 else
                 {
-                    currentScreen->RenderEndTransition(time - GetFrameTime());
+                    currentScreen.RenderEndTransitionFunction(time - GetFrameTime());
                     IsInTransition = false;
                 }
             }
@@ -68,14 +82,14 @@ namespace ScreenManager
         }
         else
         {
-            if (currentScreen)
+            if (currentScreen.LoadFunction)
             {
                 float time = (float)GetTime() - TransitionBeginTime;
-                if (!currentScreen->IsStartTransitionDone(time))
-                    currentScreen->RenderStartTransition(time);
+                if (!currentScreen.IsStartTransitionDoneFunction(time))
+                    currentScreen.RenderStartTransitionFunction(time);
                 else
                 {
-                    currentScreen->RenderStartTransition(time - GetFrameTime());
+                    currentScreen.RenderStartTransitionFunction(time - GetFrameTime());
                     IsInTransition = false;
                 }
             }
@@ -85,4 +99,16 @@ namespace ScreenManager
             }
         }
     }
+
+    
+    void ChangeScreen(const Screen screen)
+    {
+        if (IsInTransition)
+            return;
+
+        nextScreen = screen;
+        IsInTransition = true;
+        TransitionBeginTime = GetTime();
+    }
+
 } // namespace ScreenManager

@@ -16,6 +16,7 @@
 #include <sstream>
 #include <string>
 
+
 Board::Board()
 {
     isWhiteTurn = true;
@@ -30,7 +31,39 @@ Board::Board()
             board[{x, y}] = {PieceColor::NoColor, PieceType::None};
 }
 
-void GameScreen::Load()
+namespace GameScreen
+{
+    static Texture2D whitePiecesTexture;
+    static Texture2D blackPiecesTexture;
+    static Texture2D saveIconTexture;
+
+    static int boardX, boardY;
+    static Board board;
+
+    static Vector2i selectedPiece = {-1, -1};
+
+    static BannerAnimation saveBanner;
+
+    static ParticleEmitter eatParticleEmitter;
+
+    static int boardSquareSize = 50; 
+
+    Screen GetScreen()
+    {
+        Screen screen;
+        screen.LoadFunction = &Load;
+        screen.UnloadFunction = &Unload;
+        screen.UpdateFunction = &Update;
+        screen.RenderFunction = &Render;
+        screen.IsEndTransitionDoneFunction = &IsEndTransitionDone;
+        screen.IsStartTransitionDoneFunction = &IsStartTransitionDone;
+        screen.RenderStartTransitionFunction = &RenderStartTransition;
+        screen.RenderEndTransitionFunction = &RenderEndTransition;
+
+        return screen;
+    }
+
+void Load()
 {
     whitePiecesTexture = LoadTexture("Assets/Textures/WhitePieces.png");
     blackPiecesTexture = LoadTexture("Assets/Textures/BlackPieces.png");
@@ -59,7 +92,7 @@ void GameScreen::Load()
     eatParticleEmitter = ParticleEmitter(particle, {0.0f, 0.0f}, -1.64f, {177, 199, 206, 255}, {53, 99, 97, 1}, {8.0f, 8.0f}, {0.0f, 0.0f}, 2.0f, 0.04f, 0.41f, 2.0f * PI);
 }
 
-void GameScreen::Unload()
+void Unload()
 {
     UnloadTexture(whitePiecesTexture);
     UnloadTexture(blackPiecesTexture);
@@ -70,7 +103,7 @@ void GameScreen::Unload()
     board.blackLegalMoves.clear();
 }
 
-void GameScreen::Update(float dt)
+void Update(float dt)
 {
     if (IsWindowResized())
         OnResize();
@@ -100,7 +133,7 @@ void GameScreen::Update(float dt)
         Vector2 boardMousePos = {(mousePos.x - boardX) / boardSquareSize, (mousePos.y - boardY) / boardSquareSize};
         if (CheckCollisionPointRec(mousePos, {0, 0, 50, 56}))
         {
-            ScreenManager::ChangeScreen<MenuScreen>();
+            ScreenManager::ChangeScreen(MenuScreen::GetScreen());
         }
         else if (CheckCollisionPointRec(mousePos, {GetScreenWidth() - 50.0f, 0.0f, 50, 56}))
         {
@@ -145,7 +178,7 @@ void GameScreen::Update(float dt)
     saveBanner.Update(dt);
 }
 
-void GameScreen::Render()
+void Render()
 {
     ClearBackground({51, 76, 76, 255});
     DrawBoard();
@@ -189,7 +222,7 @@ void GameScreen::Render()
 }
 
 
-void GameScreen::RenderStartTransition(float time)
+void RenderStartTransition(float time)
 {
     float progress = time / 1.3f;
 
@@ -197,12 +230,12 @@ void GameScreen::RenderStartTransition(float time)
     DrawRectangle(0, (int)Lerp((float)GetScreenHeight() / 2, GetScreenHeight(), progress), GetScreenWidth(), GetScreenHeight(), BLACK);
 }
 
-bool GameScreen::IsStartTransitionDone(float time)
+bool IsStartTransitionDone(float time)
 {
     return time / 1.3f > 1.0f;
 }
 
-void GameScreen::RenderEndTransition(float time)
+void RenderEndTransition(float time)
 {
     float progress = time / 1.3f;
 
@@ -217,12 +250,12 @@ void GameScreen::RenderEndTransition(float time)
 
 }
 
-bool GameScreen::IsEndTransitionDone(float time)
+bool IsEndTransitionDone(float time)
 {
     return time / 1.3f > 1.0f;
 }
 
-void GameScreen::OnResize()
+void OnResize()
 {
     LOG_INFO("OnResize called");
 
@@ -237,13 +270,13 @@ void GameScreen::OnResize()
     saveBanner = BannerAnimation(4.0f, "SAVED", {(float)GetScreenWidth() + 100.0f, 70.0f}, {-100.0f, 70.0f}, 20, WHITE, RED);
 }
 
-void GameScreen::LoadBoard(std::string filename)
+void LoadBoard(std::string filename)
 {
     std::ifstream fileStream(filename);
     if (!fileStream)
     {
         LOG_WARN("Failed to open " + filename);
-        ScreenManager::ChangeScreen<MenuScreen>();
+        ScreenManager::ChangeScreen(MenuScreen::GetScreen());
         return;
     }
 
@@ -340,7 +373,7 @@ void GameScreen::LoadBoard(std::string filename)
     }
 }
 
-void GameScreen::SaveBoard()
+void SaveBoard()
 {
     std::stringstream ss;
     for (int y = 0; y < 8; y++)
@@ -426,7 +459,7 @@ void GameScreen::SaveBoard()
     outfile.close();
 }
 
-void GameScreen::DrawBoard()
+void DrawBoard()
 {
     DrawRectangle(boardX - 1, boardY - 1, boardSquareSize * 8 + 2, boardSquareSize * 8 + 2, {54, 93, 201, 255});
 
@@ -448,7 +481,7 @@ void GameScreen::DrawBoard()
     }
 }
 
-void GameScreen::DrawPiece(int x, int y, PieceType type, PieceColor color)
+void DrawPiece(int x, int y, PieceType type, PieceColor color)
 {
     Rectangle sourceRect = {(int)type * 16.0f, 0.0f, 16.0f, 16.0f};
     Rectangle destRect = {(float)(boardX + x * boardSquareSize) + 2.0f, (float)(boardY + y * boardSquareSize), boardSquareSize - 4.0f, boardSquareSize - 4.0f};
@@ -465,7 +498,7 @@ void GameScreen::DrawPiece(int x, int y, PieceType type, PieceColor color)
     }
 }
 
-bool GameScreen::MovePiece(Vector2i from, Vector2i to, Board& _board)
+bool MovePiece(Vector2i from, Vector2i to, Board& _board)
 {
     PieceColor color = _board.board[from].first;
     PieceType type = _board.board[from].second;
@@ -539,7 +572,7 @@ bool GameScreen::MovePiece(Vector2i from, Vector2i to, Board& _board)
     return false;
 }
 
-std::vector<LegalMove> GameScreen::GetLegalMoves(PieceColor color, Board _board)
+std::vector<LegalMove> GetLegalMoves(PieceColor color, Board _board)
 {
     std::vector<LegalMove> legalMoves;
     for (int y = 0; y < 8; y++)
@@ -563,7 +596,7 @@ std::vector<LegalMove> GameScreen::GetLegalMoves(PieceColor color, Board _board)
     return legalMoves;
 }
 
-bool GameScreen::IsLegalMove(std::vector<LegalMove> legalMoves, Vector2i from, Vector2i to)
+bool IsLegalMove(std::vector<LegalMove> legalMoves, Vector2i from, Vector2i to)
 {
     for (int i = 0; i < legalMoves.size(); i++)
     {
@@ -574,7 +607,7 @@ bool GameScreen::IsLegalMove(std::vector<LegalMove> legalMoves, Vector2i from, V
     return false;
 }
 
-bool GameScreen::IsPossibleLegalMove(PieceType type, PieceColor color, Vector2i from, Vector2i to, Board _board)
+bool IsPossibleLegalMove(PieceType type, PieceColor color, Vector2i from, Vector2i to, Board _board)
 {
     if (_board.board[to].first == color)
         return false;
@@ -753,7 +786,7 @@ bool GameScreen::IsPossibleLegalMove(PieceType type, PieceColor color, Vector2i 
     return false;
 }
 
-bool GameScreen::IsInCheck(PieceColor color, Board _board)
+bool IsInCheck(PieceColor color, Board _board)
 {
     if (color == PieceColor::NoColor)
         return false;
@@ -791,7 +824,7 @@ bool GameScreen::IsInCheck(PieceColor color, Board _board)
     return false;
 }
 
-void GameScreen::RemoveCheckMoves()
+void RemoveCheckMoves()
 {
     PieceColor color = board.isWhiteTurn ? PieceColor::White : PieceColor::Black;
 
@@ -816,3 +849,4 @@ void GameScreen::RemoveCheckMoves()
             legalMoves->erase(legalMoves->begin() + i);
     }
 }
+} // namespace GameScreen

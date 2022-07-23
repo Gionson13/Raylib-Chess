@@ -74,20 +74,23 @@ struct Board
     Board();
 };
 
-class GameScreen : public Screen
+namespace GameScreen
 {
-public:
-    void Load() override;
-    void Unload() override;
 
-    void Update(float dt) override;
-    void Render() override;
+    Screen GetScreen();
 
-    void RenderStartTransition(float time) override;
-    bool IsStartTransitionDone(float time) override;
 
-    void RenderEndTransition(float time) override;
-    bool IsEndTransitionDone(float time) override;
+    void Load();
+    void Unload();
+
+    void Update(float dt);
+    void Render();
+
+    void RenderStartTransition(float time);
+    bool IsStartTransitionDone(float time);
+
+    void RenderEndTransition(float time);
+    bool IsEndTransitionDone(float time);
 
     void OnResize();
 
@@ -108,19 +111,5 @@ public:
 
     std::vector<LegalMove> GetLegalMoves(PieceColor color, Board _board);
 
-private:
-    Texture2D whitePiecesTexture;
-    Texture2D blackPiecesTexture;
-    Texture2D saveIconTexture;
 
-    int boardX, boardY;
-    Board board;
-
-    Vector2i selectedPiece = {-1, -1};
-
-    BannerAnimation saveBanner;
-
-    ParticleEmitter eatParticleEmitter;
-
-    int boardSquareSize = 50; 
-};
+} // namespace GameScreen

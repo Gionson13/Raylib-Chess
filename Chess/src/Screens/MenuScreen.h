@@ -42,22 +42,20 @@ typedef struct {
 } GuiFileDialogState;
 #endif
 
-class MenuScreen : public Screen
+namespace MenuScreen
 {
-public:
-    void Load() override;
-    void Unload() override;
+    Screen GetScreen();
 
-    void Update(float dt) override;
-    void Render() override;
+    void Load();
+    void Unload();
 
-    void RenderStartTransition(float time) override;
-    bool IsStartTransitionDone(float time) override;
+    void Update(float dt);
+    void Render();
 
-    void RenderEndTransition(float time) override;
-    bool IsEndTransitionDone(float time) override;
-private:
-    Rectangle startRect;
-    Rectangle loadRect;
-    GuiFileDialogState fileDialogState;
-};
+    void RenderStartTransition(float time);
+    bool IsStartTransitionDone(float time);
+
+    void RenderEndTransition(float time);
+    bool IsEndTransitionDone(float time);
+
+} // namespace MenuScreen
