@@ -10,7 +10,7 @@ class ParticleEmitter
 {
 public:
     ParticleEmitter();
-    ParticleEmitter(Particle particle, Vector2 acceleration, float rotationAcceleration, Color startColor, Color endColor, Vector2 particleSize, Vector2 position, float lifetime, float interval, float randomness, float spread);
+    ParticleEmitter(Particle particle, Vector2 acceleration, float rotationAcceleration, Color startColor, Color endColor, Vector2 resolution, float minSizeFactor, float maxSizeFactor, Vector2 position, float interval, float randomness, float spread);
     void Update(float dt);
     void Render();
 
@@ -50,16 +50,21 @@ public:
     Color GetEndColor();
     void SetEndColor(Color color);
 
-    Vector2 GetParticleSize();
-    void SetParticleSize(Vector2 size);
+    Vector2 GetParticleResolution();
+    void SetParticleResolution(Vector2 resolution);
 
+    float GetParticleMinSizeFactor();
+    void SetParticleMinSizeFactor(float factor);
+
+    float GetParticleMaxSizeFactor();
+    void SetParticleMaxSizeFactor(float factor);
+    
     float GetParticleCount();
     void ClearParticles();
 
 private:
     std::vector<Particle> particles;
 
-    float particleLifetime;
     float spawnInterval;
 
     float spawnTimer = 0.0f;
@@ -71,7 +76,9 @@ private:
 
     Color startColor;
     Color endColor;
-    Vector2 particleSize;
+    Vector2 particleResolution;
+    float particleMinSizeFactor;
+    float particleMaxSizeFactor;
 
     Vector2 spawnPosition;
     float randomness;

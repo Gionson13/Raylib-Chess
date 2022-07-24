@@ -7,10 +7,14 @@
 
 struct Particle
 {
-    float life = 0.0f;
+    float lifetime;
 
     Vector2 position;
     Vector2 velocity;
     float rotation;
     float rotationVelocity;
+
+    Color startColor;
+    Color endColor;
+    Vector2 size;
 };

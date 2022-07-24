@@ -85,11 +85,12 @@ void Load()
     board.blackLegalMoves = GetLegalMoves(PieceColor::Black, board);
 
     Particle particle;
-    particle.velocity = {80.0f, -75.0f};
+    particle.lifetime = 1.5f;
+    particle.velocity = {130.0f, -125.0f};
     particle.rotation = PI / 2;
     particle.rotationVelocity = 2.0f;
 
-    eatParticleEmitter = ParticleEmitter(particle, {0.0f, 0.0f}, -1.64f, {177, 199, 206, 255}, {53, 99, 97, 1}, {8.0f, 8.0f}, {0.0f, 0.0f}, 2.0f, 0.04f, 0.41f, 2.0f * PI);
+    eatParticleEmitter = ParticleEmitter(particle, {0.0f, 0.0f}, -1.64f, {177, 199, 206, 255}, {53, 99, 97, 1}, {1.0f, 1.0f}, 2.0f, 10.0f, {0.0f, 0.0f}, 0.04f, 0.41f, 2.0f * PI);
 }
 
 void Unload()

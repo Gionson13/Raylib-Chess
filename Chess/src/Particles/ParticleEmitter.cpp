@@ -12,8 +12,13 @@ ParticleEmitter::ParticleEmitter()
 }
 
 
-ParticleEmitter::ParticleEmitter(Particle particle, Vector2 acceleration, float rotationAcceleration, Color startColor, Color endColor, Vector2 particleSize,  Vector2 position, float lifetime, float interval, float randomness, float spread) : 
-    spawnParticle(particle), particleAcceleration(acceleration), particleRotationAcceleration(rotationAcceleration), startColor(startColor), endColor(endColor), particleSize(particleSize), spawnPosition(position), particleLifetime(lifetime), spawnInterval(interval), randomness(randomness), spread(spread)
+ParticleEmitter::ParticleEmitter(Particle particle, Vector2 acceleration, float rotationAcceleration, Color startColor, Color endColor, Vector2 resolution, float minSizeFactor, float maxSizeFactor,  Vector2 position, float interval, float randomness, float spread) :
+    spawnParticle(particle),
+    particleAcceleration(acceleration), particleRotationAcceleration(rotationAcceleration), 
+    startColor(startColor), endColor(endColor), 
+    particleResolution(resolution), particleMinSizeFactor(minSizeFactor), particleMaxSizeFactor(maxSizeFactor), 
+    spawnPosition(position), 
+    spawnInterval(interval), randomness(randomness), spread(spread)
 {
 
 }
@@ -23,8 +28,8 @@ void ParticleEmitter::Update(float dt)
 {
     for (int i = particles.size() - 1; i > -1; i--)
     {
-        particles[i].life += dt;
-        if (particles[i].life > particleLifetime)
+        particles[i].lifetime -= dt;
+        if (particles[i].lifetime < 0.0f)
         {
             particles.erase(particles.begin() + i);
             continue;
@@ -57,10 +62,10 @@ void ParticleEmitter::Render()
 {
     for (Particle particle : particles)
     {
-        float lifeProgress = particle.life / particleLifetime;
-        Rectangle rect = {particle.position.x, particle.position.y, particleSize.x, particleSize.y};
-        Color color = LerpColor(startColor, endColor, lifeProgress); 
-        DrawRectanglePro(rect, {particleSize.x / 2, particleSize.y / 2}, RAD2DEG * particle.rotation, color);
+        float lifeProgress = 1.0f - particle.lifetime / spawnParticle.lifetime;
+        Color color = LerpColor(particle.startColor, particle.endColor, lifeProgress); 
+        Rectangle rect = {particle.position.x, particle.position.y, particle.size.x, particle.size.y};
+        DrawRectanglePro(rect, {particle.size.x / 2, particle.size.y / 2}, RAD2DEG * particle.rotation, color);
     }
 }
 
@@ -89,12 +94,19 @@ void ParticleEmitter::EmitNow(int quantity)
     for (int i = 0; i < quantity; i++)
     {   
         Particle newParticle;
+        newParticle.lifetime = spawnParticle.lifetime;
         newParticle.position = spawnPosition + spawnParticle.position;
         newParticle.velocity = Vector2Rotate(spawnParticle.velocity, random.GetFloat() * spread - spread / 2.0f);
         newParticle.velocity.x += newParticle.velocity.x * randomness * random.GetRangef(-2.0f, 0.0f);
         newParticle.velocity.y += newParticle.velocity.y * randomness * random.GetRangef(-2.0f, 0.0f);
         newParticle.rotation = spawnParticle.rotation;
         newParticle.rotationVelocity = spawnParticle.rotationVelocity + spawnParticle.rotationVelocity * randomness * random.GetRangef(-2.0f, 0.0f);
+        newParticle.startColor = startColor;
+        newParticle.endColor = endColor;
+
+        float sizeFactor = random.GetRangef(particleMinSizeFactor, particleMaxSizeFactor);
+        newParticle.size = {particleResolution.x * sizeFactor, particleResolution.y * sizeFactor};
+
         particles.emplace_back(newParticle);
     }
 }
@@ -161,12 +173,12 @@ void ParticleEmitter::SetSpread(float spradValue)
 
 float ParticleEmitter::GetParticleLifetime()
 {
-    return particleLifetime;
+    return spawnParticle.lifetime;
 }
 
 void ParticleEmitter::SetParticleLifetime(float lifetime)
 {
-    particleLifetime = lifetime;
+    spawnParticle.lifetime = lifetime;
 }
 
 float ParticleEmitter::GetSpawnInterval()
@@ -198,15 +210,36 @@ void ParticleEmitter::SetEndColor(Color color)
     endColor = color;
 }
 
-Vector2 ParticleEmitter::GetParticleSize()
+Vector2 ParticleEmitter::GetParticleResolution()
 {
-    return particleSize;
+    return particleResolution;
 }
 
-void ParticleEmitter::SetParticleSize(Vector2 size)
+void ParticleEmitter::SetParticleResolution(Vector2 resolution)
 {
-    particleSize = size;
+    particleResolution = resolution;
 }
+
+float ParticleEmitter::GetParticleMinSizeFactor()
+{
+    return particleMinSizeFactor;
+}
+
+void ParticleEmitter::SetParticleMinSizeFactor(float factor)
+{
+    particleMinSizeFactor = factor;
+}
+
+float ParticleEmitter::GetParticleMaxSizeFactor()
+{
+    return particleMaxSizeFactor;
+}
+
+void ParticleEmitter::SetParticleMaxSizeFactor(float factor)
+{
+    particleMaxSizeFactor = factor;
+}
+
 
 float ParticleEmitter::GetParticleCount()
 {
