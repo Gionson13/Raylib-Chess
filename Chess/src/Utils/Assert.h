@@ -4,7 +4,7 @@
 
 #define ENABLE_ASSERT
 
-#ifdef ENABLE_ASSERT
+#if defined(ENABLE_ASSERT) && defined(_DEBUG)
     #define ASSERT(cond, msg)   \
     {                           \
         if (!(cond))            \
@@ -13,6 +13,6 @@
             __debugbreak();     \
         }                       \
     }
-#elif
+#else
     #define ASSERT(cond, msg)
 #endif

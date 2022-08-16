@@ -1,5 +1,7 @@
 #include "ScreenManager.h"
-#include "raylib.h"
+#include "../Utils/Assert.h"
+
+#include <raylib.h>
 
 namespace ScreenManager
 {
@@ -14,14 +16,14 @@ namespace ScreenManager
 
     void UpdateScreen()
     {
-        if (currentScreen.UpdateFunction)
-            currentScreen.UpdateFunction(GetFrameTime());
+		if (currentScreen.UpdateFunction)
+			currentScreen.UpdateFunction(GetFrameTime());
     }
 
     void RenderScreen()
     {
-        if (currentScreen.RenderFunction)
-            currentScreen.RenderFunction();
+		if (currentScreen.RenderFunction)
+			currentScreen.RenderFunction();
     }
 
     void UpdateScreenManager()
@@ -107,6 +109,12 @@ namespace ScreenManager
             return;
 
         nextScreen = screen;
+
+		ASSERT(nextScreen.UpdateFunction, "Missing Update Function");
+		ASSERT(nextScreen.RenderFunction, "Missing Render Function");
+		ASSERT(nextScreen.LoadFunction, "Missing Load Function");
+		ASSERT(nextScreen.UnloadFunction, "Missing Unload Function");
+
         IsInTransition = true;
         TransitionBeginTime = GetTime();
     }
