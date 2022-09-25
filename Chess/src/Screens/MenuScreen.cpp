@@ -1,5 +1,5 @@
 #include "MenuScreen.h"
-#include "../Globals.h"
+#include "../Variables.h"
 #include "../ScreenManagement/ScreenManager.h"
 #include "GameScreen.h"
 
@@ -72,7 +72,7 @@ void Update(float dt)
         if (IsFileExtension(fileDialogState.fileNameText, ".csv"))
         {
             std::string fileName = TextFormat("%s/%s", fileDialogState.dirPathText, fileDialogState.fileNameText);
-            Globals::BoardFilePath = fileName;
+            Variables::BoardFilePath = fileName;
             ScreenManager::ChangeScreen(GameScreen::GetScreen());
         }
 

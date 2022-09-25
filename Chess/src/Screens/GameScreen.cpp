@@ -1,6 +1,7 @@
 #include "GameScreen.h"
 
-#include "../Globals.h"
+#include "../Globals.hpp"
+#include "../Variables.h"
 #include "../ScreenManagement/ScreenManager.h"
 #include "../Utils/Logger.h"
 #include "../Utils/Timer.h"
@@ -65,32 +66,32 @@ namespace GameScreen
 
 void Load()
 {
-    whitePiecesTexture = LoadTexture("Assets/Textures/WhitePieces.png");
-    blackPiecesTexture = LoadTexture("Assets/Textures/BlackPieces.png");
-    saveIconTexture = LoadTexture("Assets/Textures/icons-save.png");
+    whitePiecesTexture = LoadTexture(Globals::Textures::WHITE_PIECES.c_str());
+    blackPiecesTexture = LoadTexture(Globals::Textures::BLACK_PIECES.c_str());
+    saveIconTexture = LoadTexture(Globals::Textures::SAVE_ICON.c_str());
 
     SetTextureFilter(whitePiecesTexture, TEXTURE_FILTER_POINT);
     SetTextureFilter(blackPiecesTexture, TEXTURE_FILTER_POINT);
 
     OnResize();
 
-    if (Globals::BoardFilePath.empty())
-        LoadBoard("Assets/Boards/basic_board.csv");
+    if (Variables::BoardFilePath.empty())
+        LoadBoard(Globals::BASIC_BOARD_PATH);
     else
-        LoadBoard(Globals::BoardFilePath);
-    Globals::BoardFilePath = "";
+        LoadBoard(Variables::BoardFilePath);
+    Variables::BoardFilePath = "";
     LOG_INFO("Loaded board");
 
     board.whiteLegalMoves = GetLegalMoves(PieceColor::White, board);
     board.blackLegalMoves = GetLegalMoves(PieceColor::Black, board);
 
     Particle particle;
-    particle.lifetime = 1.5f;
-    particle.velocity = {130.0f, -125.0f};
-    particle.rotation = PI / 2;
-    particle.rotationVelocity = 2.0f;
+    particle.lifetime = Globals::EatParticle::LIFETIME;
+    particle.velocity = {Globals::EatParticle::VEL_X, Globals::EatParticle::VEL_Y};
+    particle.rotation = Globals::EatParticle::ROTATION;
+    particle.rotationVelocity = Globals::EatParticle::ROTATION_VEL;
 
-    eatParticleEmitter = ParticleEmitter(particle, {0.0f, 0.0f}, -1.64f, {177, 199, 206, 255}, {53, 99, 97, 1}, {1.0f, 1.0f}, 2.0f, 10.0f, {0.0f, 0.0f}, 0.04f, 0.41f, 2.0f * PI);
+    eatParticleEmitter = ParticleEmitter(particle, {Globals::EatParticle::ACCEL_X, Globals::EatParticle::ACCEL_Y}, Globals::EatParticle::ROTATION_ACCEL, Globals::EatParticle::BEGIN_COLOR, Globals::EatParticle::END_COLOR, {1.0f, 1.0f}, 2.0f, 10.0f, {0.0f, 0.0f}, 0.04f, 0.41f, 2.0f * PI);
 }
 
 void Unload()

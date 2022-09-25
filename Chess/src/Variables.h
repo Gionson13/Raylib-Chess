@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-namespace Globals 
+namespace Variables 
 {
     extern std::string BoardFilePath;
-} // namespace Globals
+} // namespace Variables 
