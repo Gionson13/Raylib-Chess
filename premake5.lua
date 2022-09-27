@@ -35,6 +35,10 @@ project "Chess"
         "Dependencies/fmt/%{cfg.system}/lib"
     }
 
+	prebuildcommands {
+		"\"C:\\Dev\\c++\\ResourcesManager\\bin\\ResourceManager\\Release\\ResourceManager.exe\" Chess\\resources.res -p rl -o Chess\\src\\Globals.hpp"
+	}
+
     filter { "system:Windows" }
         links { "raylib", "fmt", "Winmm", "gdi32", "opengl32" }
     

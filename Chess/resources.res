@@ -8,6 +8,7 @@ Globals
 	}
 
 	BASIC_BOARD_PATH : string : "Assets/Boards/basic_board.csv";
+	BACKGROUND_COLOR : color  : #FF327064; 
 
 	EatParticle
 	{
@@ -15,7 +16,7 @@ Globals
 		VEL_X          : float : 130.0f;
 		VEL_Y          : float : -125.0f;
 		ROTATION       : float : PI / 2.0f;
-		ROTATION_VEL   : float : 2.0f; = Comment
+		ROTATION_VEL   : float : 2.0f;
 		ACCEL_X        : float : 0.0f;
 		ACCEL_Y        : float : 0.0f;
 		ROTATION_ACCEL : float : -1.64f;

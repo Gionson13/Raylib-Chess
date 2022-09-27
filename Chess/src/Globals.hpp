@@ -45,5 +45,6 @@ namespace Globals
 	} // namespace EatParticle
 
 	const std::string BASIC_BOARD_PATH = "Assets/Boards/basic_board.csv";
+	const Color BACKGROUND_COLOR = {50, 112, 100, 255};
 } // namespace Globals
 

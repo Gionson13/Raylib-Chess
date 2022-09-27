@@ -182,7 +182,7 @@ void Update(float dt)
 
 void Render()
 {
-    ClearBackground({51, 76, 76, 255});
+    ClearBackground(Globals::BACKGROUND_COLOR);
     DrawBoard();
     eatParticleEmitter.Render();
     for (int y = 0; y < 8; y++)

@@ -1,5 +1,6 @@
 #include "MenuScreen.h"
 #include "../Variables.h"
+#include "../Globals.hpp"
 #include "../ScreenManagement/ScreenManager.h"
 #include "GameScreen.h"
 
@@ -82,7 +83,7 @@ void Update(float dt)
 
 void Render()
 {
-    ClearBackground({51, 76, 76, 255});
+    ClearBackground(Globals::BACKGROUND_COLOR);
     DrawText("Chess", 100, 50, 50, WHITE);
     DrawRectangleLinesEx(startRect, 3.0f, {54, 93, 201, 255});
     DrawText("Start game", (int)startRect.x + 9, (int)startRect.y + 11, 32, {54, 93, 201, 255});
