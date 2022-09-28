@@ -49,7 +49,7 @@ void Unload()
 {
 }
 
-void Update(float dt)
+void Update(float)
 {
     if (!fileDialogState.fileDialogActive)
     {
