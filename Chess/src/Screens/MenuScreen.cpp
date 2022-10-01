@@ -83,12 +83,12 @@ void Update(float)
 
 void Render()
 {
-    ClearBackground(Globals::BACKGROUND_COLOR);
+    ClearBackground(Globals::Colors::BACKGROUND);
     DrawText("Chess", 100, 50, 50, WHITE);
-    DrawRectangleLinesEx(startRect, 3.0f, {54, 93, 201, 255});
-    DrawText("Start game", (int)startRect.x + 9, (int)startRect.y + 11, 32, {54, 93, 201, 255});
-    DrawRectangleLinesEx(loadRect, 3.0f, {54, 93, 201, 255});
-    DrawText("Load game", (int)loadRect.x + 9, (int)loadRect.y + 11, 32, {54, 93, 201, 255});
+    DrawRectangleLinesEx(startRect, 3.0f, Globals::Colors::BUTTON );
+    DrawText("Start game", (int)startRect.x + 9, (int)startRect.y + 11, 32, Globals::Colors::BUTTON);
+    DrawRectangleLinesEx(loadRect, 3.0f, Globals::Colors::BUTTON);
+    DrawText("Load game", (int)loadRect.x + 9, (int)loadRect.y + 11, 32, Globals::Colors::BUTTON);
 
     GuiFileDialog(&fileDialogState);
 }

@@ -3,6 +3,8 @@
 #include "../ScreenManagement/ScreenManager.h"
 #include "../Utils/Logger.h"
 
+static bool gameRunning;
+
 
 bool WindowManager::InitWindow(const std::string& title, int width, int height, bool resizable)
 {

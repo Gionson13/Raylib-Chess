@@ -8,22 +8,36 @@ Globals
 	}
 
 	BASIC_BOARD_PATH : string : "Assets/Boards/basic_board.csv";
-	BACKGROUND_COLOR : color  : #FF327064; 
+
+	Colors
+	{
+		BACKGROUND       : color : #FF143425;
+		 
+		BOARD_OUTLINE    : color : #FF006697;
+		BOARD_SELECTED   : color : #FFc0cf6d;
+		BOARD_LEGAL_MOVE : color : #FF528350;
+		BOARD_BLACK      : color : #FF222222;
+		BOARD_WHITE      : color : #FFF2F2F2;
+		
+		BUTTON           : color : #FFaa0115;
+	}
 
 	EatParticle
 	{
-		LIFETIME       : float : 1.5f;
-		VEL_X          : float : 130.0f;
-		VEL_Y          : float : -125.0f;
-		ROTATION       : float : PI / 2.0f;
-		ROTATION_VEL   : float : 2.0f;
-		ACCEL_X        : float : 0.0f;
-		ACCEL_Y        : float : 0.0f;
-		ROTATION_ACCEL : float : -1.64f;
-		BEGIN_COLOR    : color : #FFB1C7CE;
-		END_COLOR      : color : #01356361;
+		LIFETIME        : float    : 1.5f;
+		VELOCITY        : vector2f : {130.0f, -125.0f};
+		ROTATION        : float    : PI / 2.0f;
+		ROTATION_VEL    : float    : 2.0f;
+		ACCELERATION    : vector2f : {0.0f, 0.0f};
+		ROTATION_ACCEL  : float    : -1.64f;
+		BEGIN_COLOR     : color    : #FFB1C7CE;
+		END_COLOR       : color    : #01356361;
+		ASPECT_RATIO    : vector2f : {1.0f, 1.0f};
+		MIN_SIZE_FACTOR : float    : 2.0f;
+		MAX_SIZE_FACTOR : float    : 10.0f;
+		INTERVAL        : float    : 0.04f;
+		RANDOMNESS      : float    : 0.41f;
+		SPREAD          : float    : 2.0f * PI;
 	}
-    = eatParticleEmitter = ParticleEmitter(particle, {0.0f, 0.0f}, -1.64f, {177, 199, 206, 255}, {53, 99, 97, 1}, {1.0f, 1.0f}, 2.0f, 10.0f, {0.0f, 0.0f}, 0.04f, 0.41f, 2.0f * PI);
-
 }
 

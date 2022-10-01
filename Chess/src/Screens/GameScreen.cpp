@@ -87,11 +87,11 @@ void Load()
 
     Particle particle;
     particle.lifetime = Globals::EatParticle::LIFETIME;
-    particle.velocity = {Globals::EatParticle::VEL_X, Globals::EatParticle::VEL_Y};
+    particle.velocity = Globals::EatParticle::VELOCITY;
     particle.rotation = Globals::EatParticle::ROTATION;
     particle.rotationVelocity = Globals::EatParticle::ROTATION_VEL;
 
-    eatParticleEmitter = ParticleEmitter(particle, {Globals::EatParticle::ACCEL_X, Globals::EatParticle::ACCEL_Y}, Globals::EatParticle::ROTATION_ACCEL, Globals::EatParticle::BEGIN_COLOR, Globals::EatParticle::END_COLOR, {1.0f, 1.0f}, 2.0f, 10.0f, {0.0f, 0.0f}, 0.04f, 0.41f, 2.0f * PI);
+    eatParticleEmitter = ParticleEmitter(particle, Globals::EatParticle::ACCELERATION, Globals::EatParticle::ROTATION_ACCEL, Globals::EatParticle::BEGIN_COLOR, Globals::EatParticle::END_COLOR, Globals::EatParticle::ASPECT_RATIO, Globals::EatParticle::MIN_SIZE_FACTOR, Globals::EatParticle::MAX_SIZE_FACTOR, {0.0f, 0.0f}, Globals::EatParticle::INTERVAL, Globals::EatParticle::RANDOMNESS, Globals::EatParticle::SPREAD);
 }
 
 void Unload()
@@ -119,7 +119,7 @@ void Update(float dt)
         if (CheckCollisionPointRec(mousePos, {(float)boardX, (float)boardY, 8.0f * boardSquareSize, 8.0f * boardSquareSize}))
         {
             Vector2i boardPosi = {(int)boardMousePos.x, (int)boardMousePos.y};
-            if (selectedPiece.x == -1 && selectedPiece.y == -1 || board.board[boardPosi].first == (board.isWhiteTurn ? PieceColor::White : PieceColor::Black))
+            if ((selectedPiece.x == -1 && selectedPiece.y == -1) || board.board[boardPosi].first == (board.isWhiteTurn ? PieceColor::White : PieceColor::Black))
             {
                 LOG_INFO("Selecting piece");
                 selectedPiece = boardPosi;
@@ -182,7 +182,7 @@ void Update(float dt)
 
 void Render()
 {
-    ClearBackground(Globals::BACKGROUND_COLOR);
+    ClearBackground(Globals::Colors::BACKGROUND);
     DrawBoard();
     eatParticleEmitter.Render();
     for (int y = 0; y < 8; y++)
@@ -463,7 +463,7 @@ void SaveBoard()
 
 void DrawBoard()
 {
-    DrawRectangle(boardX - 1, boardY - 1, boardSquareSize * 8 + 2, boardSquareSize * 8 + 2, {54, 93, 201, 255});
+    DrawRectangle(boardX - 1, boardY - 1, boardSquareSize * 8 + 2, boardSquareSize * 8 + 2, Globals::Colors::BOARD_OUTLINE);
 
     for (int y = 0; y < 8; y++)
     {
@@ -471,13 +471,13 @@ void DrawBoard()
         {
             Color squareColor;
             if (x == selectedPiece.x && y == selectedPiece.y)
-                squareColor = {188, 188, 75, 255};
+                squareColor = Globals::Colors::BOARD_SELECTED;
             else if (selectedPiece.x != -1 && selectedPiece.y != -1 && IsLegalMove(board.isWhiteTurn ? board.whiteLegalMoves : board.blackLegalMoves, selectedPiece, {x, y}))
-                squareColor = {83, 175, 29, 255};
+                squareColor = Globals::Colors::BOARD_LEGAL_MOVE;
             else if ((y * 9 + x) % 2 == 0)
-                squareColor = {232, 232, 232, 255};
+                squareColor = Globals::Colors::BOARD_WHITE;
             else
-                squareColor = {13, 13, 13, 255};
+                squareColor = Globals::Colors::BOARD_BLACK;
             DrawRectangle(boardX + x * boardSquareSize, boardY + y * boardSquareSize, boardSquareSize, boardSquareSize, squareColor);
         }
     }
@@ -600,7 +600,7 @@ std::vector<LegalMove> GetLegalMoves(PieceColor color, Board _board)
 
 bool IsLegalMove(std::vector<LegalMove> legalMoves, Vector2i from, Vector2i to)
 {
-    for (int i = 0; i < legalMoves.size(); i++)
+    for (size_t i = 0; i < legalMoves.size(); i++)
     {
         if (legalMoves[i].from.x == from.x && legalMoves[i].from.y == from.y && legalMoves[i].to.x == to.x && legalMoves[i].to.y == to.y)
             return true;
@@ -732,7 +732,7 @@ bool IsPossibleLegalMove(PieceType type, PieceColor color, Vector2i from, Vector
         if (distance.y < 0)
             distance.y *= -1;
 
-        if (distance.x == 2 && distance.y == 1 || distance.x == 1 && distance.y == 2)
+        if ((distance.x == 2 && distance.y == 1) || (distance.x == 1 && distance.y == 2))
             return true;
     }
     else if (type == PieceType::Pawn)
@@ -744,7 +744,7 @@ bool IsPossibleLegalMove(PieceType type, PieceColor color, Vector2i from, Vector
                 if (_board.board[to].first == PieceColor::Black)
                     return false;
 
-                if (to.y + 1 == from.y || from.y == 6 && to.y == 4)
+                if (to.y + 1 == from.y || (from.y == 6 && to.y == 4))
                     return true;
             }
             else if (color == PieceColor::Black)
@@ -752,7 +752,7 @@ bool IsPossibleLegalMove(PieceType type, PieceColor color, Vector2i from, Vector
                 if (_board.board[to].first == PieceColor::White)
                     return false;
 
-                if (to.y - 1 == from.y || from.y == 1 && to.y == 3)
+                if (to.y - 1 == from.y || (from.y == 1 && to.y == 3))
                     return true;
             }
         }
