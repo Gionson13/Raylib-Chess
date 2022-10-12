@@ -20,7 +20,15 @@ namespace MenuScreen
 {
     static Rectangle startRect;
     static Rectangle loadRect;
+    static Rectangle settRect;
     static GuiFileDialogState fileDialogState;
+    static bool settings;
+    static const int fps[] = {-1, 240, 120, 60, 30};
+    static const int fpsSize = 5;
+
+    static Rectangle settingClose;
+    static Rectangle settingsFps;
+    static Rectangle settingsRenderFPS;
 
     Screen GetScreen()
     {
@@ -41,8 +49,14 @@ namespace MenuScreen
 void Load()
 {
     startRect = {100, 200, 200, 50};
-    loadRect = {100, 300, 200, 50};
+    loadRect = {100, 270, 200, 50};
+    settRect = {100, 340, 200, 50};
     fileDialogState = InitGuiFileDialog(400, 300, (std::string(GetWorkingDirectory()) + "/Assets/Saves").c_str(), false);
+    settings = false;
+
+    settingClose = {1, 1, 110, 50};
+    settingsFps = {GetScreenWidth() / 2.0f - 50, GetScreenHeight() / 2.0f - 25, 170, 50};
+    settingsRenderFPS = {GetScreenWidth() / 2.0f - 50, GetScreenHeight() / 2.0f + 55, 50, 50};
 }
 
 void Unload()
@@ -51,7 +65,7 @@ void Unload()
 
 void Update(float)
 {
-    if (!fileDialogState.fileDialogActive)
+    if (!fileDialogState.fileDialogActive && !settings)
     {
         if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
         {
@@ -63,6 +77,10 @@ void Update(float)
             else if (CheckCollisionPointRec(mousePos, loadRect))
             {
                 fileDialogState.fileDialogActive = true;
+            }
+            else if (CheckCollisionPointRec(mousePos, settRect))
+            {
+                settings = true;
             }
         }
     }
@@ -79,18 +97,80 @@ void Update(float)
 
         fileDialogState.SelectFilePressed = false;
     }
+
+    if (settings)
+    {
+        Vector2 mousePos = GetMousePosition();
+        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
+        {
+            if (CheckCollisionPointRec(mousePos, settingClose))
+            {
+                settings = false;
+            }
+
+            if (CheckCollisionPointRec(mousePos, settingsFps))
+            {
+                Variables::TargetFPSIndex += 1;
+                if (Variables::TargetFPSIndex >= fpsSize)
+                    Variables::TargetFPSIndex = 0;
+
+                SetTargetFPS(fps[Variables::TargetFPSIndex]);
+                Logger::Info("Target FPS set to: {}", fps[Variables::TargetFPSIndex]);
+            }
+            if (CheckCollisionPointRec(mousePos, settingsRenderFPS))
+            {
+                Variables::RenderFPS = !Variables::RenderFPS;
+                Logger::Info("Toggled debug FPS rendering");
+            }
+        }
+    }
+}
+
+static void RenderButton(const std::string& text, Rectangle rec)
+{
+    DrawRectangleLinesEx(rec, 3.0f, Globals::Colors::BUTTON);
+    int length = MeasureText(text.c_str(), 32);
+    DrawText(text.c_str(), (int)rec.x + ((int)rec.width - length) / 2, (int)rec.y + (int)rec.height / 4, 32, Globals::Colors::BUTTON);
+}
+
+static void RenderSettingButton(const std::string& inner, const std::string& outer, Rectangle rec)
+{
+    int outerLength = MeasureText(outer.c_str(), 32);
+    DrawText(outer.c_str(), rec.x - outerLength - 10, rec.y + rec.height / 4 , 32, WHITE);
+    DrawRectangleLinesEx(rec, 3.0f, Globals::Colors::SETTINGS_BUTTON);
+    int innerLength = MeasureText(inner.c_str(), 32);
+    DrawText(inner.c_str(), (int)rec.x + ((int)rec.width - innerLength) / 2, (int)rec.y + (int)rec.height / 4, 32, Globals::Colors::SETTINGS_BUTTON);
 }
 
 void Render()
 {
     ClearBackground(Globals::Colors::BACKGROUND);
     DrawText("Chess", 100, 50, 50, WHITE);
-    DrawRectangleLinesEx(startRect, 3.0f, Globals::Colors::BUTTON );
-    DrawText("Start game", (int)startRect.x + 9, (int)startRect.y + 11, 32, Globals::Colors::BUTTON);
-    DrawRectangleLinesEx(loadRect, 3.0f, Globals::Colors::BUTTON);
-    DrawText("Load game", (int)loadRect.x + 9, (int)loadRect.y + 11, 32, Globals::Colors::BUTTON);
+    RenderButton("Start game", startRect);
+    RenderButton("Load game", loadRect);
+    RenderButton("Settings", settRect);
+
+    if (settings)
+    {
+        DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Globals::Colors::SETTINGS_BACKGROUND);
+
+        std::string fpsText;
+        if (fps[Variables::TargetFPSIndex] <= 0)
+            fpsText = "Unlimited";
+        else
+            fpsText = std::to_string(fps[Variables::TargetFPSIndex]);
+        RenderSettingButton(fpsText, "FPS: ", settingsFps);
+        if (Variables::RenderFPS)
+            RenderSettingButton("x", "Draw FPS: ", settingsRenderFPS);
+        else
+            RenderSettingButton("", "Draw FPS: ", settingsRenderFPS);
+        RenderSettingButton("Close", "", settingClose);
+    }
 
     GuiFileDialog(&fileDialogState);
+
+    if (Variables::RenderFPS)
+        DrawFPS(0, 0);
 }
 
 void RenderStartTransition(float time)

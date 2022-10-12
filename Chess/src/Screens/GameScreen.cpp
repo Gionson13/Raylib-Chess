@@ -221,6 +221,9 @@ void Render()
     DrawTextureEx(saveIconTexture, {GetScreenWidth() - 45.0f, 5.0f}, 0.0f, 0.8f, WHITE);
 
     saveBanner.Render();
+
+    if (Variables::RenderFPS)
+        DrawFPS(0, 0);
 }
 
 

@@ -49,6 +49,8 @@ namespace Globals
 		const Color BOARD_BLACK = {34, 34, 34, 255};
 		const Color BOARD_WHITE = {242, 242, 242, 255};
 		const Color BUTTON = {170, 1, 21, 255};
+		const Color SETTINGS_BUTTON = {238, 238, 238, 255};
+		const Color SETTINGS_BACKGROUND = {145, 145, 145, 145};
 	} // namespace Colors
 
 	namespace EatParticle
