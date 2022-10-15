@@ -152,14 +152,13 @@ void Update(float dt)
             Vector2i movePos = {(int)boardMousePos.x, (int)boardMousePos.y};
             if (board.board[movePos].first != (board.isWhiteTurn ? PieceColor::White : PieceColor::Black))
             {
-                bool isEating = false;
-                LOG_INFO("Changing piece positionq");
-                if (board.board[movePos].first != PieceColor::NoColor)
-                    isEating = true;
+                bool isEating = IsEating(selectedPiece, movePos, board);
+                LOG_INFO("Changing piece position");
                 if (MovePiece(selectedPiece, movePos, board))
                 {
                     if (isEating)
                     {
+                        // TODO: Fix en-passant to spawn particles from eaten piece
                         eatParticleEmitter.SetSpawnPosition({boardX + movePos.x * boardSquareSize + boardSquareSize / 2.0f, boardY + movePos.y * boardSquareSize + boardSquareSize / 2.0f});
                         eatParticleEmitter.EmitNow(16);
                     }
@@ -337,7 +336,7 @@ void LoadBoard(std::string filename)
                 PieceType type;
                 PieceColor color;
                 if (piece > 0)
-                    color = PieceColor::White;
+					color = PieceColor::White;
                 else
                 {
                     color = PieceColor::Black;
@@ -827,6 +826,33 @@ bool IsInCheck(PieceColor color, Board _board)
     }
 
     return false;
+}
+
+// Doesn't check for colors
+bool IsEating(Vector2i from, Vector2i to, Board& _board)
+{
+    if (_board.board[to].first != PieceColor::NoColor)
+        return true;
+
+    if (_board.board[from].second != PieceType::Pawn)
+        return false;
+
+    if (to.y + 1 == from.y)
+    {
+        // En-Passant
+        if (from.y == _board.pawnMovedTwice.y && to.x == _board.pawnMovedTwice.x)
+            return true;
+    }
+    
+    if (to.y - 1 == from.y)
+    {
+        // En-Passant
+        if (from.y == _board.pawnMovedTwice.y && to.x == _board.pawnMovedTwice.x)
+            return true;
+    }
+
+    return false;
+
 }
 
 void RemoveCheckMoves()

@@ -105,6 +105,7 @@ namespace GameScreen
     bool IsLegalMove(std::vector<LegalMove> legalMoves, Vector2i from, Vector2i to);
     bool IsPossibleLegalMove(PieceType type, PieceColor color, Vector2i from, Vector2i to, Board _board);
     bool IsInCheck(PieceColor color, Board _board);
+    bool IsEating(Vector2i from, Vector2i to, Board& _board);
 
     // Remove all moves that would lead to the king being eaten in the next move
     void RemoveCheckMoves();
