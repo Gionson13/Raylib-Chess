@@ -6,27 +6,28 @@
 class BannerAnimation
 {
 public:
-    BannerAnimation();
-    BannerAnimation(float duration, std::string text, Vector2 start, Vector2 end, int fontSize, Color textColor, Color bannerColor);
+	BannerAnimation();
+	BannerAnimation(float duration, std::string text, Vector2 start, Vector2 end, int fontSize, Color textColor, Color bannerColor);
 
-    void Update(float dt);
-    void Render();
+	void Update(float dt);
+	void Render();
 
-    bool IsDone();
+	bool IsDone();
 
-    void Start();
+	void Start();
 
 private:
-   Vector2 startPosition;
-   Vector2 endPosition;
+	float lifeDuration;
+	float lifetime = 0.0f;
 
-   Color bannerColor;
-   Color textColor;
-   std::string text;
-   int textSize;
+	std::string text;
 
-   float lifeDuration;
-   float lifetime = 0.0f;
+	Vector2 startPosition;
+	Vector2 endPosition;
 
-   bool started = false;
+	int textSize;
+	Color textColor;
+	Color bannerColor;
+
+	bool started = false;
 };

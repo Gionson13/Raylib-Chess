@@ -43,6 +43,7 @@ project "Chess"
 
     filter { "system:Windows" }
         links { "raylib", "fmt", "Winmm", "gdi32", "opengl32" }
+		linkoptions { "-static-libstdc++" } -- filesystem dll not linking
     
     filter { "system:Linux" }
         links { "raylib", "fmt" } -- , "m", "dl", "rt", "X11"
