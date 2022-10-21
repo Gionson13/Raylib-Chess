@@ -25,6 +25,8 @@ namespace ScreenManager
     void UpdateScreenManager();
     void UpdateAndRenderTransitions();
 
+	void OnResize();
+
     // template<typename T>
     // void ChangeScreen()
     // {

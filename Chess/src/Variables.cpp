@@ -3,6 +3,6 @@
 namespace Variables 
 {
     std::string BoardFilePath = "";
-    int TargetFPSIndex = 0;
+    int TargetFPSIndex = 3;
     bool RenderFPS = false;
 }

@@ -30,11 +30,13 @@ bool WindowManager::InitWindow(const std::string& title, int width, int height, 
 
 void WindowManager::RunWindow()
 {
-    while (gameRunning)
-    {
+	while (gameRunning)
+	{
         ScreenManager::UpdateScreenManager(); // Change Screen if necessary
 
         gameRunning = !WindowShouldClose();
+		if (IsWindowResized())
+			ScreenManager::OnResize();
         ScreenManager::UpdateScreen(); 
 
         BeginDrawing();

@@ -41,6 +41,7 @@ namespace MenuScreen
         screen.IsStartTransitionDoneFunction = &IsStartTransitionDone;
         screen.RenderStartTransitionFunction = &RenderStartTransition;
         screen.RenderEndTransitionFunction = &RenderEndTransition;
+		screen.OnResize = &OnResize;
 
         return screen;
     }
@@ -48,6 +49,8 @@ namespace MenuScreen
 
 void Load()
 {
+	SetTargetFPS(fps[Variables::TargetFPSIndex]);
+
     startRect = {100, 200, 200, 50};
     loadRect = {100, 270, 200, 50};
     settRect = {100, 340, 200, 50};
@@ -171,6 +174,12 @@ void Render()
 
     if (Variables::RenderFPS)
         DrawFPS(0, 0);
+}
+
+void OnResize()
+{
+	settingsFps = {GetScreenWidth() / 2.0f - 50, GetScreenHeight() / 2.0f - 25, 170, 50};
+    settingsRenderFPS = {GetScreenWidth() / 2.0f - 50, GetScreenHeight() / 2.0f + 55, 50, 50};
 }
 
 void RenderStartTransition(float time)

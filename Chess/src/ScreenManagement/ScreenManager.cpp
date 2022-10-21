@@ -102,6 +102,12 @@ namespace ScreenManager
         }
     }
 
+	void OnResize()
+	{
+		if (currentScreen.OnResize)
+			currentScreen.OnResize();
+	}
+
     
     void ChangeScreen(const Screen screen)
     {

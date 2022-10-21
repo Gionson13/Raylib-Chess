@@ -32,4 +32,7 @@ struct Screen
     bool(*IsEndTransitionDoneFunction)(float) = nullptr;
     void(*RenderStartTransitionFunction)(float) = nullptr;
     void(*RenderEndTransitionFunction)(float) = nullptr;
+
+	// Callbacks
+	void(*OnResize)();
 };

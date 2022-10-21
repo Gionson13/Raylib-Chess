@@ -60,6 +60,7 @@ namespace GameScreen
         screen.IsStartTransitionDoneFunction = &IsStartTransitionDone;
         screen.RenderStartTransitionFunction = &RenderStartTransition;
         screen.RenderEndTransitionFunction = &RenderEndTransition;
+		screen.OnResize = &OnResize;
 
         return screen;
     }
@@ -107,12 +108,9 @@ void Unload()
 
 void Update(float dt)
 {
-    if (IsWindowResized())
-        OnResize();
-
-    eatParticleEmitter.Update(dt);
+	eatParticleEmitter.Update(dt);
         
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+	if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
     {
         Vector2 mousePos = GetMousePosition();
         Vector2 boardMousePos = {(mousePos.x - boardX) / boardSquareSize, (mousePos.y - boardY) / boardSquareSize};

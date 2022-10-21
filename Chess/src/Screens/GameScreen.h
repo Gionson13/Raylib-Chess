@@ -111,6 +111,4 @@ namespace GameScreen
     void RemoveCheckMoves();
 
     std::vector<LegalMove> GetLegalMoves(PieceColor color, Board _board);
-
-
 } // namespace GameScreen
