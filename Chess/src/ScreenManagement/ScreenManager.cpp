@@ -5,102 +5,102 @@
 
 namespace ScreenManager
 {
-    static Screen currentScreen;
-    static Screen nextScreen;
+	static Screen currentScreen;
+	static Screen nextScreen;
     
-    static bool IsInTransition = false;
-    static float TransitionBeginTime = 0.0f;
+	static bool IsInTransition = false;
+	static float TransitionBeginTime = 0.0f;
 
-    static bool ReturnTrue(float time) { return true; }
-    static void DoNothing(float time) {}
+	static bool ReturnTrue(float time) { return true; }
+	static void DoNothing(float time) {}
 
-    void UpdateScreen()
-    {
+	void UpdateScreen()
+	{
 		if (currentScreen.UpdateFunction)
 			currentScreen.UpdateFunction(GetFrameTime());
-    }
+	}
 
-    void RenderScreen()
-    {
+	void RenderScreen()
+	{
 		if (currentScreen.RenderFunction)
 			currentScreen.RenderFunction();
-    }
+	}
 
-    void UpdateScreenManager()
-    {
-        if (IsInTransition)
-            return;
+	void UpdateScreenManager()
+	{
+		if (IsInTransition)
+			return;
 
-        if (nextScreen.LoadFunction)
-        {
-            if (currentScreen.UnloadFunction)
-            {
-                currentScreen.UnloadFunction();
-                // delete currentScreen;
-            }
+		if (nextScreen.LoadFunction)
+		{
+			if (currentScreen.UnloadFunction)
+			{
+				currentScreen.UnloadFunction();
+				// delete currentScreen;
+			}
 
-            currentScreen = nextScreen;
-            nextScreen = {};
+			currentScreen = nextScreen;
+			nextScreen = {};
 
-            currentScreen.LoadFunction();
-            
-            if (!currentScreen.IsStartTransitionDoneFunction)
-                currentScreen.IsStartTransitionDoneFunction = &ReturnTrue;
-            if (!currentScreen.IsEndTransitionDoneFunction)
-                currentScreen.IsEndTransitionDoneFunction = &ReturnTrue;
+			currentScreen.LoadFunction();
 
-            if (!currentScreen.RenderStartTransitionFunction)
-                currentScreen.RenderStartTransitionFunction = &DoNothing;
-            if (!currentScreen.RenderEndTransitionFunction)
-                currentScreen.RenderEndTransitionFunction = &DoNothing;
+			if (!currentScreen.IsStartTransitionDoneFunction)
+				currentScreen.IsStartTransitionDoneFunction = &ReturnTrue;
+			if (!currentScreen.IsEndTransitionDoneFunction)
+				currentScreen.IsEndTransitionDoneFunction = &ReturnTrue;
 
-            LOG_INFO("Screen successfully loaded");
+			if (!currentScreen.RenderStartTransitionFunction)
+				currentScreen.RenderStartTransitionFunction = &DoNothing;
+			if (!currentScreen.RenderEndTransitionFunction)
+				currentScreen.RenderEndTransitionFunction = &DoNothing;
 
-            IsInTransition = true;
-            TransitionBeginTime = GetTime();
-        }
-    }
+			LOG_INFO("Screen successfully loaded");
 
-    void UpdateAndRenderTransitions()
-    {
-        if (!IsInTransition)
-            return;
+			IsInTransition = true;
+			TransitionBeginTime = GetTime();
+		}
+	}
 
-        if (nextScreen.LoadFunction)
-        {
-            if (currentScreen.LoadFunction)
-            {
-                float time = (float)GetTime() - TransitionBeginTime;
-                if (!currentScreen.IsEndTransitionDoneFunction(time)) 
-                    currentScreen.RenderEndTransitionFunction(time);
-                else
-                {
-                    currentScreen.RenderEndTransitionFunction(time - GetFrameTime());
-                    IsInTransition = false;
-                }
-            }
-            else
-                IsInTransition = false;
-        }
-        else
-        {
-            if (currentScreen.LoadFunction)
-            {
-                float time = (float)GetTime() - TransitionBeginTime;
-                if (!currentScreen.IsStartTransitionDoneFunction(time))
-                    currentScreen.RenderStartTransitionFunction(time);
-                else
-                {
-                    currentScreen.RenderStartTransitionFunction(time - GetFrameTime());
-                    IsInTransition = false;
-                }
-            }
-            else 
-            {
-                IsInTransition = false;
-            }
-        }
-    }
+	void UpdateAndRenderTransitions()
+	{
+		if (!IsInTransition)
+			return;
+
+		if (nextScreen.LoadFunction)
+		{
+			if (currentScreen.LoadFunction)
+			{
+				float time = (float)GetTime() - TransitionBeginTime;
+				if (!currentScreen.IsEndTransitionDoneFunction(time))
+					currentScreen.RenderEndTransitionFunction(time);
+				else
+				{
+					currentScreen.RenderEndTransitionFunction(time - GetFrameTime());
+					IsInTransition = false;
+				}
+			}
+			else
+				IsInTransition = false;
+		}
+		else
+		{
+			if (currentScreen.LoadFunction)
+			{
+				float time = (float)GetTime() - TransitionBeginTime;
+				if (!currentScreen.IsStartTransitionDoneFunction(time))
+					currentScreen.RenderStartTransitionFunction(time);
+				else
+				{
+					currentScreen.RenderStartTransitionFunction(time - GetFrameTime());
+					IsInTransition = false;
+				}
+			}
+			else
+			{
+				IsInTransition = false;
+			}
+		}
+	}
 
 	void OnResize()
 	{
@@ -109,20 +109,19 @@ namespace ScreenManager
 	}
 
     
-    void ChangeScreen(const Screen screen)
-    {
-        if (IsInTransition)
-            return;
+	void ChangeScreen(const Screen screen)
+	{
+		if (IsInTransition)
+			return;
 
-        nextScreen = screen;
+		nextScreen = screen;
 
 		ASSERT(nextScreen.UpdateFunction, "Missing Update Function");
 		ASSERT(nextScreen.RenderFunction, "Missing Render Function");
 		ASSERT(nextScreen.LoadFunction, "Missing Load Function");
 		ASSERT(nextScreen.UnloadFunction, "Missing Unload Function");
 
-        IsInTransition = true;
-        TransitionBeginTime = GetTime();
-    }
-
+		IsInTransition = true;
+		TransitionBeginTime = GetTime();
+	}
 } // namespace ScreenManager

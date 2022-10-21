@@ -21,17 +21,17 @@
 
 struct Screen
 {
-    // Mandatory
-    void(*LoadFunction)();
-    void(*UnloadFunction)();
-    void(*UpdateFunction)(float);
-    void(*RenderFunction)();
+	// Mandatory
+	void(*LoadFunction)();
+	void(*UnloadFunction)();
+	void(*UpdateFunction)(float);
+	void(*RenderFunction)();
 
-    // Optional
-    bool(*IsStartTransitionDoneFunction)(float) = nullptr;
-    bool(*IsEndTransitionDoneFunction)(float) = nullptr;
-    void(*RenderStartTransitionFunction)(float) = nullptr;
-    void(*RenderEndTransitionFunction)(float) = nullptr;
+	// Optional
+	bool(*IsStartTransitionDoneFunction)(float) = nullptr;
+	bool(*IsEndTransitionDoneFunction)(float) = nullptr;
+	void(*RenderStartTransitionFunction)(float) = nullptr;
+	void(*RenderEndTransitionFunction)(float) = nullptr
 
 	// Callbacks
 	void(*OnResize)();

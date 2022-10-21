@@ -5,14 +5,14 @@
 #define ENABLE_ASSERT
 
 #if defined(ENABLE_ASSERT) && defined(_DEBUG)
-    #define ASSERT(cond, msg)   \
-    {                           \
-        if (!(cond))            \
-        {                       \
-            Logger::Error(msg); \
-            __debugbreak();     \
-        }                       \
-    }
+	#define ASSERT(cond, msg)   \
+	{                           \
+		if (!(cond))            \
+		{                       \
+			Logger::Error(msg); \
+			__debugbreak();     \
+		}                       \
+	}
 #else
-    #define ASSERT(cond, msg)
+	#define ASSERT(cond, msg)
 #endif

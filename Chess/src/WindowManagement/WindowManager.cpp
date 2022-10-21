@@ -8,50 +8,50 @@ static bool gameRunning;
 
 bool WindowManager::InitWindow(const std::string& title, int width, int height, bool resizable)
 {
-    SetTraceLogLevel(LOG_WARNING);
+	SetTraceLogLevel(LOG_WARNING);
 
-    if (resizable)
-        SetConfigFlags(FLAG_WINDOW_RESIZABLE);
-    ::InitWindow(width, height, title.c_str());
-    // MaximizeWindow();
-    gameRunning = true;
+	if (resizable)
+		SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+	::InitWindow(width, height, title.c_str());
+	// MaximizeWindow();
+	gameRunning = true;
 
-    if (IsWindowReady())
-    {
-        LOG_INFO("Window successfully created:\n\tTitle:\t    {}\n\tSize:\t    {}x{}\n\tResizable:  {}", title.c_str(), width, height, resizable);
-        return true;
-    }
-    else
-    {
-        LOG_ERROR("Failed to create window");
-        return false;
-    }
+	if (IsWindowReady())
+	{
+		LOG_INFO("Window successfully created:\n\tTitle:\t    {}\n\tSize:\t    {}x{}\n\tResizable:  {}", title.c_str(), width, height, resizable);
+		return true;
+	}
+	else
+	{
+		LOG_ERROR("Failed to create window");
+		return false;
+	}
 }
 
 void WindowManager::RunWindow()
 {
 	while (gameRunning)
 	{
-        ScreenManager::UpdateScreenManager(); // Change Screen if necessary
+		ScreenManager::UpdateScreenManager(); // Change Screen if necessary
 
-        gameRunning = !WindowShouldClose();
+		gameRunning = !WindowShouldClose();
 		if (IsWindowResized())
 			ScreenManager::OnResize();
-        ScreenManager::UpdateScreen(); 
+		ScreenManager::UpdateScreen();
 
-        BeginDrawing();
-        ScreenManager::RenderScreen();
-        ScreenManager::UpdateAndRenderTransitions();
-        EndDrawing();
-    }
+		BeginDrawing();
+		ScreenManager::RenderScreen();
+		ScreenManager::UpdateAndRenderTransitions();
+		EndDrawing();
+	}
 
-    ::CloseWindow();
-    LOG_INFO("Window closed successfully");
+	::CloseWindow();
+	LOG_INFO("Window closed successfully");
 }
 
 void WindowManager::CloseWindow()
 {
-    gameRunning = false;
+	gameRunning = false;
 }
 
 

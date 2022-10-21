@@ -4,9 +4,9 @@
 
 int main()
 {
-    if (WindowManager::InitWindow("Chess", 800, 480, true))
-    {
-        ScreenManager::ChangeScreen(MenuScreen::GetScreen());
-        WindowManager::RunWindow();
-    }
+	if (WindowManager::InitWindow("Chess", 800, 480, true))
+	{
+		ScreenManager::ChangeScreen(MenuScreen::GetScreen());
+		WindowManager::RunWindow();
+	}
 }

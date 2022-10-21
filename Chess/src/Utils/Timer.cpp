@@ -5,12 +5,12 @@
 
 ScopeTimer::ScopeTimer(std::string scopeName)
 {
-    name = scopeName;
-    startTime = GetTime();
+	name = scopeName;
+	startTime = GetTime();
 }
 
 ScopeTimer::~ScopeTimer()
 {
-    double end = GetTime();
-    LOG_INFO("{} took: {} sec", name, end - startTime);
+	double end = GetTime();
+	LOG_INFO("{} took: {} sec", name, end - startTime);
 }

@@ -5,12 +5,12 @@
 class ScopeTimer
 {
 public:
-    ScopeTimer() = delete;
-    ScopeTimer(std::string scopeName);
+	ScopeTimer() = delete;
+	ScopeTimer(std::string scopeName);
 
-    ~ScopeTimer();
+	~ScopeTimer();
 
 private:
-    double startTime;
-    std::string name;
+	double startTime;
+	std::string name;
 };
