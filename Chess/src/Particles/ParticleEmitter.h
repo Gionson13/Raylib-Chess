@@ -65,8 +65,6 @@ public:
 private:
     std::vector<Particle> particles;
 
-    float spawnInterval;
-
     float spawnTimer = 0.0f;
 
     Particle spawnParticle;
@@ -81,6 +79,8 @@ private:
     float particleMaxSizeFactor;
 
     Vector2 spawnPosition;
+
+	float spawnInterval;
     float randomness;
     float spread;
 
