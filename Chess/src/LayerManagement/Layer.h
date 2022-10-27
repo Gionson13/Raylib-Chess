@@ -11,7 +11,7 @@ struct Layer
 	void Resize(int width, int height);
 	void Render();
 	// Returns whether the layer should end
-	bool Update(float dt);
+	[[nodiscard("If the value is true, the layer should close")]] bool Update(float dt);
 
 	void(*OnLoad)() = nullptr;
 	void(*OnUnload)() = nullptr;

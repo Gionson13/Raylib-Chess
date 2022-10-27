@@ -6,6 +6,7 @@
 #include "../Utils/Logger.h"
 #include "../Utils/Timer.h"
 #include "../WindowManagement/WindowManager.h"
+#include "../Layers/settingsLayer.h"
 #include "MenuScreen.h"
 
 #include <algorithm>
@@ -49,6 +50,9 @@ namespace GameScreen
 
     static int boardSquareSize = 50; 
 
+	static Layer settingsLayer;
+	static bool settings = false;
+
     Screen GetScreen()
     {
         Screen screen;
@@ -91,6 +95,11 @@ void Load()
     particle.rotationVelocity = Globals::EatParticle::ROTATION_VEL;
 
     eatParticleEmitter = ParticleEmitter(particle, Globals::EatParticle::ACCELERATION, Globals::EatParticle::ROTATION_ACCEL, Globals::EatParticle::BEGIN_COLOR, Globals::EatParticle::END_COLOR, Globals::EatParticle::ASPECT_RATIO, Globals::EatParticle::MIN_SIZE_FACTOR, Globals::EatParticle::MAX_SIZE_FACTOR, {0.0f, 0.0f}, Globals::EatParticle::INTERVAL, Globals::EatParticle::RANDOMNESS, Globals::EatParticle::SPREAD);
+
+	settingsLayer = SettingsLayer::GetLayer();
+	settingsLayer.x = 0;
+	settingsLayer.y = 0;
+	settingsLayer.Load();
 }
 
 void Unload()
@@ -102,13 +111,18 @@ void Unload()
     board.board.clear();
     board.whiteLegalMoves.clear();
     board.blackLegalMoves.clear();
+
+	settingsLayer.Unload();
 }
 
 void Update(float dt)
 {
 	eatParticleEmitter.Update(dt);
+
+	if (IsKeyPressed(KEY_H))
+		settings = !settings;
         
-	if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+	if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && !settings)
     {
         Vector2 mousePos = GetMousePosition();
         Vector2 boardMousePos = {(mousePos.x - boardX) / boardSquareSize, (mousePos.y - boardY) / boardSquareSize};
@@ -125,7 +139,7 @@ void Update(float dt)
             }
         }
     }
-    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
+    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && !settings)
     {
         Vector2 mousePos = GetMousePosition();
         Vector2 boardMousePos = {(mousePos.x - boardX) / boardSquareSize, (mousePos.y - boardY) / boardSquareSize};
@@ -173,6 +187,13 @@ void Update(float dt)
     if (saveBanner.IsDone())
         saveBanner = BannerAnimation(4.0f, "SAVED", {(float)GetScreenWidth() + 100.0f, 70.0f}, {-100.0f, 70.0f}, 20, WHITE, RED);
     saveBanner.Update(dt);
+
+	if (settings)
+	{
+		if(settingsLayer.Update(dt))
+			settings = false;
+	}
+
 }
 
 void Render()
@@ -209,13 +230,19 @@ void Render()
     }
 
     // UI
-    DrawRectangle(10, 25, 40, 6, WHITE);
-    DrawRectanglePro({7, 28, 25, 6}, {0, 0}, -45.0f, WHITE);
-    DrawRectanglePro({7, 28, 25, 6}, {0, 6}, 45.0f, WHITE);
+	if (!settings)
+	{
+    	DrawRectangle(10, 25, 40, 6, WHITE);
+    	DrawRectanglePro({7, 28, 25, 6}, {0, 0}, -45.0f, WHITE);
+    	DrawRectanglePro({7, 28, 25, 6}, {0, 6}, 45.0f, WHITE);
+	}
     
     DrawTextureEx(saveIconTexture, {GetScreenWidth() - 45.0f, 5.0f}, 0.0f, 0.8f, WHITE);
 
     saveBanner.Render();
+
+	if (settings)
+		settingsLayer.Render();
 
     if (Variables::RenderFPS)
         DrawFPS(0, 0);
@@ -268,6 +295,8 @@ void OnResize(int width, int height)
     boardY = (int)(height / 2 - 8 * boardSquareSize / 2);
 
     saveBanner = BannerAnimation(4.0f, "SAVED", {(float)width + 100.0f, 70.0f}, {-100.0f, 70.0f}, 20, WHITE, RED);
+
+	settingsLayer.Resize(width, height);
 }
 
 void LoadBoard(std::string filename)
