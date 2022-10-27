@@ -51,7 +51,7 @@ namespace MenuScreen
 	void Update(float dt);
 	void Render();
 
-	void OnResize();
+	void OnResize(int width, int height);
 
 	void RenderStartTransition(float time);
 	bool IsStartTransitionDone(float time);

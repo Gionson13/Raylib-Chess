@@ -74,8 +74,6 @@ void Load()
     SetTextureFilter(whitePiecesTexture, TEXTURE_FILTER_POINT);
     SetTextureFilter(blackPiecesTexture, TEXTURE_FILTER_POINT);
 
-    OnResize();
-
     if (Variables::BoardFilePath.empty())
         LoadBoard(Globals::BASIC_BOARD_PATH);
     else
@@ -257,19 +255,19 @@ bool IsEndTransitionDone(float time)
     return time / 1.3f > 1.0f;
 }
 
-void OnResize()
+void OnResize(int width, int height)
 {
     LOG_INFO("OnResize called");
 
-    if (GetScreenHeight() < GetScreenWidth())
-        boardSquareSize = (int)(GetScreenHeight() / 9.6f);
+    if (height < width)
+        boardSquareSize = (int)(height / 9.6f);
     else
-        boardSquareSize = GetScreenWidth() / 16;
+        boardSquareSize = width / 16;
 
-    boardX = (int)(GetScreenWidth() / 2 - 8 * boardSquareSize / 2);
-    boardY = (int)(GetScreenHeight() / 2 - 8 * boardSquareSize / 2);
+    boardX = (int)(width / 2 - 8 * boardSquareSize / 2);
+    boardY = (int)(height / 2 - 8 * boardSquareSize / 2);
 
-    saveBanner = BannerAnimation(4.0f, "SAVED", {(float)GetScreenWidth() + 100.0f, 70.0f}, {-100.0f, 70.0f}, 20, WHITE, RED);
+    saveBanner = BannerAnimation(4.0f, "SAVED", {(float)width + 100.0f, 70.0f}, {-100.0f, 70.0f}, 20, WHITE, RED);
 }
 
 void LoadBoard(std::string filename)

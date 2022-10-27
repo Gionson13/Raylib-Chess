@@ -92,7 +92,7 @@ namespace GameScreen
     void RenderEndTransition(float time);
     bool IsEndTransitionDone(float time);
 
-    void OnResize();
+    void OnResize(int width, int height);
 
     // Load a board from a .csv file
     void LoadBoard(std::string filename);

@@ -18,7 +18,7 @@ bool WindowManager::InitWindow(const std::string& title, int width, int height, 
 
 	if (IsWindowReady())
 	{
-		LOG_INFO("Window successfully created:\n\tTitle:\t    {}\n\tSize:\t    {}x{}\n\tResizable:  {}", title.c_str(), width, height, resizable);
+		LOG_INFO("Window successfully created:\n\tTitle:\t    {}\n\tSize:\t    {}x{}\n\tResizable:  {}", title, width, height, resizable);
 		return true;
 	}
 	else

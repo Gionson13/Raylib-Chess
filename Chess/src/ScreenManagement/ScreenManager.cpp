@@ -11,8 +11,8 @@ namespace ScreenManager
 	static bool IsInTransition = false;
 	static float TransitionBeginTime = 0.0f;
 
-	static bool ReturnTrue(float time) { return true; }
-	static void DoNothing(float time) {}
+	static bool ReturnTrue(float) { return true; }
+	static void DoNothing(float) {}
 
 	void UpdateScreen()
 	{
@@ -43,6 +43,7 @@ namespace ScreenManager
 			nextScreen = {};
 
 			currentScreen.LoadFunction();
+			OnResize();
 
 			if (!currentScreen.IsStartTransitionDoneFunction)
 				currentScreen.IsStartTransitionDoneFunction = &ReturnTrue;
@@ -105,7 +106,7 @@ namespace ScreenManager
 	void OnResize()
 	{
 		if (currentScreen.OnResize)
-			currentScreen.OnResize();
+			currentScreen.OnResize(GetScreenWidth(), GetScreenHeight());
 	}
 
     
