@@ -7,6 +7,7 @@
 #include "../Utils/Timer.h"
 #include "../WindowManagement/WindowManager.h"
 #include "../Layers/settingsLayer.h"
+#include "../Animation/KeyFrameAnimation.h"
 #include "MenuScreen.h"
 
 #include <algorithm>
@@ -17,6 +18,7 @@
 #include <raymath.h>
 #include <sstream>
 #include <string>
+
 
 
 Board::Board()
@@ -52,6 +54,8 @@ namespace GameScreen
 
 	static Layer settingsLayer;
 	static bool settings = false;
+	static Animation::KeyFrameAnimation settingsAnim;
+	static const int SETTING_X_ANIMATION = 1;
 
     Screen GetScreen()
     {
@@ -97,9 +101,11 @@ void Load()
     eatParticleEmitter = ParticleEmitter(particle, Globals::EatParticle::ACCELERATION, Globals::EatParticle::ROTATION_ACCEL, Globals::EatParticle::BEGIN_COLOR, Globals::EatParticle::END_COLOR, Globals::EatParticle::ASPECT_RATIO, Globals::EatParticle::MIN_SIZE_FACTOR, Globals::EatParticle::MAX_SIZE_FACTOR, {0.0f, 0.0f}, Globals::EatParticle::INTERVAL, Globals::EatParticle::RANDOMNESS, Globals::EatParticle::SPREAD);
 
 	settingsLayer = SettingsLayer::GetLayer();
-	settingsLayer.x = 0;
 	settingsLayer.y = 0;
 	settingsLayer.Load();
+
+	settingsAnim = Animation::KeyFrameAnimation(0.2f, Animation::AnimationType::SINGLE_SHOT);
+	settingsAnim.AddKey(SETTING_X_ANIMATION, GetScreenWidth(), GetScreenWidth() - 500.0f);
 }
 
 void Unload()
@@ -120,7 +126,11 @@ void Update(float dt)
 	eatParticleEmitter.Update(dt);
 
 	if (IsKeyPressed(KEY_H))
+	{
 		settings = !settings;
+		settingsAnim.SetReversed(!settings);
+		settingsAnim.SetPlaying(true);
+	}
         
 	if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && !settings)
     {
@@ -188,10 +198,16 @@ void Update(float dt)
         saveBanner = BannerAnimation(4.0f, "SAVED", {(float)GetScreenWidth() + 100.0f, 70.0f}, {-100.0f, 70.0f}, 20, WHITE, RED);
     saveBanner.Update(dt);
 
+	settingsAnim.Update(dt);
+	settingsLayer.x = settingsAnim.GetKey(SETTING_X_ANIMATION);
 	if (settings)
 	{
 		if(settingsLayer.Update(dt))
+		{
 			settings = false;
+			settingsAnim.SetReversed(true);
+			settingsAnim.SetPlaying(true);
+		}
 	}
 
 }
@@ -230,19 +246,18 @@ void Render()
     }
 
     // UI
-	if (!settings)
-	{
-    	DrawRectangle(10, 25, 40, 6, WHITE);
-    	DrawRectanglePro({7, 28, 25, 6}, {0, 0}, -45.0f, WHITE);
-    	DrawRectanglePro({7, 28, 25, 6}, {0, 6}, 45.0f, WHITE);
-	}
+	// if (!settings)
+	// {
+	DrawRectangle(10, 25, 40, 6, WHITE);
+	DrawRectanglePro({7, 28, 25, 6}, {0, 0}, -45.0f, WHITE);
+	DrawRectanglePro({7, 28, 25, 6}, {0, 6}, 45.0f, WHITE);
+	// }
     
     DrawTextureEx(saveIconTexture, {GetScreenWidth() - 45.0f, 5.0f}, 0.0f, 0.8f, WHITE);
 
     saveBanner.Render();
 
-	if (settings)
-		settingsLayer.Render();
+	settingsLayer.Render();
 
     if (Variables::RenderFPS)
         DrawFPS(0, 0);
@@ -296,7 +311,12 @@ void OnResize(int width, int height)
 
     saveBanner = BannerAnimation(4.0f, "SAVED", {(float)width + 100.0f, 70.0f}, {-100.0f, 70.0f}, 20, WHITE, RED);
 
-	settingsLayer.Resize(width, height);
+	settingsLayer.Resize(500, height);
+
+	settingsAnim.RemoveKey(SETTING_X_ANIMATION);
+	settingsAnim.AddKey(SETTING_X_ANIMATION, width, width - 500.0f);
+	// settingsAnim.start = width;
+	// settingsAnim.end = width - 500.0f;
 }
 
 void LoadBoard(std::string filename)
