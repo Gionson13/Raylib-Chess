@@ -791,7 +791,10 @@ bool IsPossibleLegalMove(PieceType type, PieceColor color, Vector2i from, Vector
                 if (_board.board[to].first == PieceColor::Black)
                     return false;
 
-                if (to.y + 1 == from.y || (from.y == 6 && to.y == 4))
+                if (to.y + 1 == from.y)
+                    return true;
+
+                if ((from.y == 6 && to.y == 4) && _board.board[{from.x, 5}].first == PieceColor::NoColor)
                     return true;
             }
             else if (color == PieceColor::Black)
@@ -799,7 +802,10 @@ bool IsPossibleLegalMove(PieceType type, PieceColor color, Vector2i from, Vector
                 if (_board.board[to].first == PieceColor::White)
                     return false;
 
-                if (to.y - 1 == from.y || (from.y == 1 && to.y == 3))
+                if (to.y - 1 == from.y)
+                    return true;
+
+                if ((from.y == 1 && to.y == 3) && _board.board[{from.x, 2}].first == PieceColor::NoColor)
                     return true;
             }
         }
