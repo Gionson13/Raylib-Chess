@@ -38,7 +38,7 @@ project "Chess"
     }
 
 	prebuildcommands {
-		"\"C:\\Dev\\c++\\ResourcesManager\\bin\\ResourceManager\\Release\\ResourceManager.exe\" Chess\\resources.res -p rl -o Chess\\src\\Globals.hpp"
+		"~/Dev/c++/ResourceManager/bin/ResourceManager/Debug/ResourceManager Chess/Globals.txt -p rl -o Chess/src/Globals.hpp"
 	}
 
     filter { "system:Windows" }

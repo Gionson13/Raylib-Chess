@@ -2,6 +2,7 @@
 #include "../Variables.h"
 #include "../Globals.hpp"
 #include "../ScreenManagement/ScreenManager.h"
+#include "../WindowManagement/WindowManager.h"
 #include "../Layers/SettingsLayer.h"
 #include "GameScreen.h"
 
@@ -22,6 +23,7 @@ namespace MenuScreen
 	static Rectangle startRect;
 	static Rectangle loadRect;
 	static Rectangle settRect;
+	static Rectangle exitRect;
 	static GuiFileDialogState fileDialogState;
 	static bool settings;
 
@@ -49,6 +51,7 @@ void Load()
 	startRect = {100, 200, 200, 50};
 	loadRect = {100, 270, 200, 50};
 	settRect = {100, 340, 200, 50};
+	exitRect = {100, 410, 200, 50};
 	fileDialogState = InitGuiFileDialog(400, 300, (std::string(GetWorkingDirectory()) + "/Assets/Saves").c_str(), false);
 	settings = false;
 
@@ -76,7 +79,11 @@ void Update(float dt)
 				fileDialogState.fileDialogActive = true;
 			else if (CheckCollisionPointRec(mousePos, settRect))
 				settings = true;
+			else if (CheckCollisionPointRec(mousePos, exitRect))
+				WindowManager::CloseWindow();
 		}
+		if (IsKeyPressed(KEY_ESCAPE))
+			WindowManager::CloseWindow();
 	}
 
 	if (fileDialogState.SelectFilePressed)
@@ -110,6 +117,7 @@ void Render()
 	RenderButton("Start game", startRect);
 	RenderButton("Load game", loadRect);
 	RenderButton("Settings", settRect);
+	RenderButton("Exit", exitRect);
 
 	if (settings)
 	{

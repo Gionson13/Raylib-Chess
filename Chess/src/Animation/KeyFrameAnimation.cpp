@@ -106,7 +106,7 @@ namespace Animation
 	{
 		if (keyFrames.find(id) == keyFrames.end())
 		{
-			LOG_WARN("Key {} does not exists exists", id);
+			LOG_WARN("Key {} does not exists", id);
 			return;
 		}
 

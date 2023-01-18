@@ -3,6 +3,7 @@
 #include "../Variables.h"
 #include "../Globals.hpp"
 #include "../Utils/Logger.h"
+#include "raylib.h"
 
 namespace SettingsLayer
 {
@@ -66,6 +67,9 @@ namespace SettingsLayer
 				LOG_INFO("Toggled VSYNC");
 			}
 		}
+
+		if (IsKeyPressed(KEY_ESCAPE))
+			result = true;
 
 		return result;
 	}

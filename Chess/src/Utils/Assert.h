@@ -10,7 +10,7 @@
 		if (!(cond))            \
 		{                       \
 			Logger::Error(msg); \
-			__debugbreak();     \
+			exit(1);     \
 		}                       \
 	}
 #else
