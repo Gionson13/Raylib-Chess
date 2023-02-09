@@ -27,19 +27,20 @@ Globals
 
 	EatParticle
 	{
-		LIFETIME        : float    : 1.5f;
-		VELOCITY        : vector2f : {130.0f, -125.0f};
-		ROTATION        : float    : PI / 2.0f;
-		ROTATION_VEL    : float    : 2.0f;
-		ACCELERATION    : vector2f : {0.0f, 0.0f};
-		ROTATION_ACCEL  : float    : -1.64f;
-		BEGIN_COLOR     : color    : #FFB1C7CE;
-		END_COLOR       : color    : #01356361;
-		ASPECT_RATIO    : vector2f : {1.0f, 1.0f};
-		MIN_SIZE_FACTOR : float    : 2.0f;
-		MAX_SIZE_FACTOR : float    : 10.0f;
-		INTERVAL        : float    : 0.04f;
-		RANDOMNESS      : float    : 0.41f;
-		SPREAD          : float    : 2.0f * PI;
+		LIFETIME          : float    : 1.5f;
+		VELOCITY          : vector2f : {130.0f, -125.0f};
+		ROTATION          : float    : PI / 2.0f;
+		ROTATION_VEL      : float    : 2.0f;
+		ACCELERATION      : vector2f : {0.0f, 0.0f};
+		CENTRIPETAL_ACCEL : float    : 0.0f;
+		ROTATION_ACCEL    : float    : -1.64f;
+		BEGIN_COLOR       : color    : #FFB1C7CE;
+		END_COLOR         : color    : #01356361;
+		ASPECT_RATIO      : vector2f : {1.0f, 1.0f};
+		MIN_SIZE_FACTOR   : float    : 2.0f;
+		MAX_SIZE_FACTOR   : float    : 10.0f;
+		INTERVAL          : float    : 0.04f;
+		RANDOMNESS        : float    : 0.41f;
+		SPREAD            : float    : 2.0f * PI;
 	}
 }

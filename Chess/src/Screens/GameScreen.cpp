@@ -1,14 +1,15 @@
 #include "GameScreen.h"
 
-#include "../Globals.hpp"
-#include "../Variables.h"
-#include "../ScreenManagement/ScreenManager.h"
-#include "../Utils/Logger.h"
-#include "../Utils/Timer.h"
-#include "../WindowManagement/WindowManager.h"
-#include "../Layers/SettingsLayer.h"
-#include "../Animation/KeyFrameAnimation.h"
+#include "Globals.hpp"
+#include "Variables.h"
 #include "MenuScreen.h"
+#include "Layers/SettingsLayer.h"
+
+#include <Difu/ScreenManagement/ScreenManager.h>
+#include <Difu/Utils/Logger.h>
+#include <Difu/Utils/Timer.h>
+#include <Difu/WindowManagement/WindowManager.h>
+#include <Difu/Animation/KeyFrameAnimation.h>
 
 #include <algorithm>
 #include <ctime>
@@ -83,13 +84,7 @@ void Load()
     board.whiteLegalMoves = GetLegalMoves(board, PieceColor::White);
     board.blackLegalMoves = GetLegalMoves(board, PieceColor::Black);
 
-    Particle particle;
-    particle.lifetime = Globals::EatParticle::LIFETIME;
-    particle.velocity = Globals::EatParticle::VELOCITY;
-    particle.rotation = Globals::EatParticle::ROTATION;
-    particle.rotationVelocity = Globals::EatParticle::ROTATION_VEL;
-
-    eatParticleEmitter = ParticleEmitter(particle, Globals::EatParticle::ACCELERATION, Globals::EatParticle::ROTATION_ACCEL, Globals::EatParticle::BEGIN_COLOR, Globals::EatParticle::END_COLOR, Globals::EatParticle::ASPECT_RATIO, Globals::EatParticle::MIN_SIZE_FACTOR, Globals::EatParticle::MAX_SIZE_FACTOR, {0.0f, 0.0f}, Globals::EatParticle::INTERVAL, Globals::EatParticle::RANDOMNESS, Globals::EatParticle::SPREAD);
+    eatParticleEmitter = ParticleEmitter({0.0f, 0.0f}, Globals::EatParticle::VELOCITY, Globals::EatParticle::ACCELERATION, Globals::EatParticle::CENTRIPETAL_ACCEL, Globals::EatParticle::ROTATION, Globals::EatParticle::ROTATION_VEL, Globals::EatParticle::ROTATION_ACCEL, Globals::EatParticle::BEGIN_COLOR, Globals::EatParticle::END_COLOR, Globals::EatParticle::ASPECT_RATIO, Globals::EatParticle::MIN_SIZE_FACTOR, Globals::EatParticle::MAX_SIZE_FACTOR, Globals::EatParticle::LIFETIME, Globals::EatParticle::INTERVAL, Globals::EatParticle::RANDOMNESS, Globals::EatParticle::SPREAD);
 
 	settingsLayer = SettingsLayer::GetLayer();
 	settingsLayer.y = 0;

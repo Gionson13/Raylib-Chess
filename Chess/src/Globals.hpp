@@ -61,6 +61,7 @@ namespace Globals
 		const float ROTATION = PI/2.0f;
 		const float ROTATION_VEL = 2.0f;
 		const Vector2 ACCELERATION = {0.0f,0.0f};
+		const float CENTRIPETAL_ACCEL = 0.0f;
 		const float ROTATION_ACCEL = -1.64f;
 		const Color BEGIN_COLOR = {177, 199, 206, 255};
 		const Color END_COLOR = {53, 99, 97, 1};

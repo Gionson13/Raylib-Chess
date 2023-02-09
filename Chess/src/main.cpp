@@ -1,6 +1,6 @@
-#include "ScreenManagement/ScreenManager.h"
+#include <Difu/ScreenManagement/ScreenManager.h>
 #include "Screens/MenuScreen.h"
-#include "WindowManagement/WindowManager.h"
+#include <Difu/WindowManagement/WindowManager.h>
 #include <raylib.h>
 
 int main()

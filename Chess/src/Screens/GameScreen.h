@@ -1,9 +1,10 @@
 #pragma once
 
-#include "../ScreenManagement/Screen.h"
-#include "../Utils/BannerAnimation.h"
-#include "../Particles/ParticleEmitter.h"
-#include "../Board.h"
+#include <Difu/ScreenManagement/Screen.h>
+#include <Difu/Particles/ParticleEmitter.h>
+
+#include "Utils/BannerAnimation.h"
+#include "Board.h"
 
 #include <iostream>
 #include <raylib.h>

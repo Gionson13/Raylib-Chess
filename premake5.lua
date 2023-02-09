@@ -28,11 +28,14 @@ project "Chess"
     files "Chess/**"
 
     includedirs {
+		"Chess/src",
+		"../Difu/bin/Difu/%{cfg.longname}/include",
         "Dependencies/Raylib/%{cfg.system}/include",
         "Dependencies/fmt/%{cfg.system}/include",
     }
 
     libdirs { 
+		"../Difu/bin/Difu/%{cfg.longname}",
         "Dependencies/Raylib/%{cfg.system}/lib",
         "Dependencies/fmt/%{cfg.system}/lib"
     }
@@ -46,7 +49,7 @@ project "Chess"
 		linkoptions { "-static-libstdc++" } -- filesystem dll not linking
     
     filter { "system:Linux" }
-        links { "raylib", "fmt" } -- , "m", "dl", "rt", "X11"
+        links { "raylib", "fmt", "Difu" } -- , "m", "dl", "rt", "X11"
 
     filter {}
 

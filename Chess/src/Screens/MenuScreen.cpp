@@ -1,10 +1,12 @@
 #include "MenuScreen.h"
-#include "../Variables.h"
-#include "../Globals.hpp"
-#include "../ScreenManagement/ScreenManager.h"
-#include "../WindowManagement/WindowManager.h"
-#include "../Layers/SettingsLayer.h"
+
+#include "Variables.h"
+#include "Globals.hpp"
 #include "GameScreen.h"
+#include "Layers/SettingsLayer.h"
+
+#include <Difu/ScreenManagement/ScreenManager.h>
+#include <Difu/WindowManagement/WindowManager.h>
 
 #include <algorithm>
 #include <raylib.h>
@@ -16,7 +18,7 @@
 
 #undef RAYGUI_IMPLEMENTATION            // Avoid including raygui implementation again
 #define GUI_FILE_DIALOG_IMPLEMENTATION
-#include "../Utils/GuiFileDialog.h"
+#include "Utils/GuiFileDialog.h"
 
 namespace MenuScreen
 {
@@ -52,7 +54,7 @@ void Load()
 	loadRect = {100, 270, 200, 50};
 	settRect = {100, 340, 200, 50};
 	exitRect = {100, 410, 200, 50};
-	fileDialogState = InitGuiFileDialog(400, 300, (std::string(GetWorkingDirectory()) + "/Assets/Saves").c_str(), false);
+	fileDialogState = InitGuiFileDialog((std::string(GetWorkingDirectory()) + "/Assets/Saves").c_str());
 	settings = false;
 
 	settingsLayer = SettingsLayer::GetLayer();
@@ -68,7 +70,7 @@ void Unload()
 
 void Update(float dt)
 {
-	if (!fileDialogState.fileDialogActive && !settings)
+	if (!fileDialogState.windowActive && !settings)
 	{
 		if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
 		{
@@ -76,7 +78,7 @@ void Update(float dt)
 			if (CheckCollisionPointRec(mousePos, startRect))
 				ScreenManager::ChangeScreen(GameScreen::GetScreen());
 			else if (CheckCollisionPointRec(mousePos, loadRect))
-				fileDialogState.fileDialogActive = true;
+				fileDialogState.windowActive = true;
 			else if (CheckCollisionPointRec(mousePos, settRect))
 				settings = true;
 			else if (CheckCollisionPointRec(mousePos, exitRect))

@@ -1,44 +1,47 @@
 #pragma once
 
-#include "../ScreenManagement/Screen.h"
+#include <Difu/ScreenManagement/Screen.h>
 #include <raylib.h>
 
-#ifndef GUI_FILE_DIALOG_STATE
-#define GUI_FILE_DIALOG_STATE
+#ifndef GUI_FILE_DIALOG_STATE_DEF
+#define GUI_FILE_DIALOG_STATE_DEF
+// Gui file dialog context data
 typedef struct {
-	Vector2 position;
-	Vector2 size;
 
-	bool fileDialogActive;
+    // Window management variables
+    bool windowActive;
+    Rectangle windowBounds;
+    Vector2 panOffset;
+    bool dragMode;
+    bool supportDrag;
 
-	bool dirPathEditMode;
-	char dirPathText[256];
+    // UI variables
+    bool dirPathEditMode;
+    char dirPathText[1024];
 
-	int filesListScrollIndex;
-	bool filesListEditMode;
-	int filesListActive;
+    int filesListScrollIndex;
+    bool filesListEditMode;
+    int filesListActive;
 
-	bool fileNameEditMode;
-	char fileNameText[256];
-	bool SelectFilePressed;
-	bool CancelFilePressed;
-	int fileTypeActive;
-	int itemFocused;
+    bool fileNameEditMode;
+    char fileNameText[1024];
+    bool SelectFilePressed;
+    bool CancelFilePressed;
+    int fileTypeActive;
+    int itemFocused;
 
-	// Custom state variables (depend on development software)
-	// NOTE: This variables should be added manually if required
-	char **dirFiles;
-	int dirFilesCount;
+    // Custom state variables
+    FilePathList dirFiles;
+    char filterExt[256];
+    char dirPathTextCopy[1024];
+    char fileNameTextCopy[1024];
 
-	char filterExt[256];
+    int prevFilesListActive;
 
-	char dirPathTextCopy[256];
-	char fileNameTextCopy[256];
+    bool saveFileMode;
 
-	int prevFilesListActive;
-
-	bool saveFileMode;
 } GuiFileDialogState;
+
 #endif
 
 namespace MenuScreen

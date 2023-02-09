@@ -1,9 +1,9 @@
 # include "SettingsLayer.h"
 
-#include "../Variables.h"
-#include "../Globals.hpp"
-#include "../Utils/Logger.h"
-#include "raylib.h"
+#include "Variables.h"
+#include "Globals.hpp"
+
+#include <Difu/Utils/Logger.h>
 
 namespace SettingsLayer
 {
@@ -67,7 +67,7 @@ namespace SettingsLayer
 				LOG_INFO("Toggled VSYNC");
 			}
 		}
-
+		
 		if (IsKeyPressed(KEY_ESCAPE))
 			result = true;
 
