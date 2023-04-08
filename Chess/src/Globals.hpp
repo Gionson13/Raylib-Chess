@@ -1,5 +1,6 @@
 // This file is auto generated, DO NOT MODIFY (pwease uwu)
 // PLATFORM: RAYLIB
+// SOURCE: Chess/Globals.txt
 #pragma once
 
 #include <string>
@@ -22,7 +23,7 @@
 		float x;
 		float y;
 	} Vector2;
-	#define RL_COLOR_TYPE
+	#define RL_VECTOR2_TYPE
 #endif
 
 #ifndef PI
@@ -43,15 +44,19 @@ namespace Globals
 
 	namespace Colors
 	{
-		const Color BACKGROUND = {20, 52, 37, 255};
-		const Color BOARD_OUTLINE = {0, 102, 151, 255};
-		const Color BOARD_SELECTED = {192, 207, 109, 255};
-		const Color BOARD_LEGAL_MOVE = {82, 131, 80, 255};
-		const Color BOARD_BLACK = {34, 34, 34, 255};
-		const Color BOARD_WHITE = {242, 242, 242, 255};
-		const Color BUTTON = {170, 1, 21, 255};
+		const Color BACKGROUND = {24, 28, 58, 255};
+		const Color BOARD_OUTLINE = {137, 161, 145, 255};
+		const Color BOARD_SELECTED = {33, 129, 151, 255};
+		const Color BOARD_LEGAL_MOVE = {101, 155, 94, 255};
+		const Color BOARD_BLACK = {219, 76, 64, 255};
+		const Color BOARD_WHITE = {255, 235, 198, 255};
+		const Color BUTTON = {166, 58, 80, 255};
 		const Color SETTINGS_BUTTON = {238, 238, 238, 255};
 		const Color SETTINGS_BACKGROUND = {145, 145, 145, 145};
+		const Color DIALOG_SHADE = {144, 144, 144, 144};
+		const Color DIALOG_BACKGROUND = {238, 238, 238, 255};
+		const Color DIALOG_OUTLINE = {81, 81, 81, 255};
+		const Color DIALOG_HOVER = {66, 227, 81, 255};
 	} // namespace Colors
 
 	namespace EatParticle

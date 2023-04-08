@@ -11,18 +11,23 @@ Globals
 
 	Colors
 	{
-		BACKGROUND          : color : #FF143425;
+		BACKGROUND          : color : #FF181C3A;
 		
-		BOARD_OUTLINE       : color : #FF006697;
-		BOARD_SELECTED      : color : #FFc0cf6d;
-		BOARD_LEGAL_MOVE    : color : #FF528350;
-		BOARD_BLACK         : color : #FF222222;
-		BOARD_WHITE         : color : #FFF2F2F2;
-		        
-		BUTTON              : color : #FFaa0115;
+		BOARD_OUTLINE       : color : #FF89a191;
+		BOARD_SELECTED      : color : #FF218197;
+		BOARD_LEGAL_MOVE    : color : #FF659B5E;
+		BOARD_BLACK         : color : #FFDB4C40;
+		BOARD_WHITE         : color : #FFFFEBC6;
+
+		BUTTON              : color : #FFA63A50;
 		
 		SETTINGS_BUTTON     : color : #FFeeeeee;
 		SETTINGS_BACKGROUND : color : #91919191;
+
+		DIALOG_SHADE        : color : #90909090;
+		DIALOG_BACKGROUND   : color : #FFeeeeee;
+		DIALOG_OUTLINE      : color : #FF515151;
+		DIALOG_HOVER        : color : #FF42E351;
 	}
 
 	EatParticle

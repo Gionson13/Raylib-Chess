@@ -40,6 +40,9 @@ namespace GameScreen
 
     static int boardSquareSize = 50; 
 
+	static bool askQueening;
+	static Vector2i queeningMovePos;
+
 	static Layer settingsLayer;
 	static bool settings = false;
 	static Animation::KeyFrameAnimation settingsAnim;
@@ -67,8 +70,8 @@ void Load()
     blackPiecesTexture = LoadTexture(Globals::Textures::BLACK_PIECES.c_str());
     saveIconTexture = LoadTexture(Globals::Textures::SAVE_ICON.c_str());
 
-    SetTextureFilter(whitePiecesTexture, TEXTURE_FILTER_POINT);
-    SetTextureFilter(blackPiecesTexture, TEXTURE_FILTER_POINT);
+    // SetTextureFilter(whitePiecesTexture, TEXTURE_FILTER_POINT);
+    // SetTextureFilter(blackPiecesTexture, TEXTURE_FILTER_POINT);
 
 	std::string boardPath = "";
     if (Variables::BoardFilePath.empty())
@@ -83,6 +86,9 @@ void Load()
 
     board.whiteLegalMoves = GetLegalMoves(board, PieceColor::White);
     board.blackLegalMoves = GetLegalMoves(board, PieceColor::Black);
+
+	askQueening = false;
+	queeningMovePos = {-1, -1};
 
     eatParticleEmitter = ParticleEmitter({0.0f, 0.0f}, Globals::EatParticle::VELOCITY, Globals::EatParticle::ACCELERATION, Globals::EatParticle::CENTRIPETAL_ACCEL, Globals::EatParticle::ROTATION, Globals::EatParticle::ROTATION_VEL, Globals::EatParticle::ROTATION_ACCEL, Globals::EatParticle::BEGIN_COLOR, Globals::EatParticle::END_COLOR, Globals::EatParticle::ASPECT_RATIO, Globals::EatParticle::MIN_SIZE_FACTOR, Globals::EatParticle::MAX_SIZE_FACTOR, Globals::EatParticle::LIFETIME, Globals::EatParticle::INTERVAL, Globals::EatParticle::RANDOMNESS, Globals::EatParticle::SPREAD);
 
@@ -119,66 +125,118 @@ void Update(float dt)
 	}
         
 	Vector2 mousePos = GetMousePosition();
-	if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && (!settings || mousePos.x < GetScreenWidth() - 500))
-    {
-        Vector2 boardMousePos = {(mousePos.x - boardX) / boardSquareSize, (mousePos.y - boardY) / boardSquareSize};
-        if (CheckCollisionPointRec(mousePos, {(float)boardX, (float)boardY, 8.0f * boardSquareSize, 8.0f * boardSquareSize}))
-        {
-            Vector2i boardPosi = {(int)boardMousePos.x, (int)boardMousePos.y};
-            if ((selectedPiece.x == -1 && selectedPiece.y == -1) || board.cells[boardPosi].first == (board.isWhiteTurn ? PieceColor::White : PieceColor::Black))
-            {
-                LOG_INFO("Selecting piece");
-                selectedPiece = boardPosi;
-                std::pair<PieceColor, PieceType> selected = board.cells[selectedPiece];
-                if (selected.second == PieceType::None || (board.isWhiteTurn && selected.first == PieceColor::Black) || (!board.isWhiteTurn && selected.first == PieceColor::White))
-                    selectedPiece = {-1, -1};
-            }
-        }
-    }
-    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && (!settings || mousePos.x < GetScreenWidth() - 500))
-	{ 
-        Vector2 boardMousePos = {(mousePos.x - boardX) / boardSquareSize, (mousePos.y - boardY) / boardSquareSize};
-        if (CheckCollisionPointRec(mousePos, {0, 0, 50, 56}))
-        {
-            ScreenManager::ChangeScreen(MenuScreen::GetScreen());
-        }
-        else if (CheckCollisionPointRec(mousePos, {GetScreenWidth() - 50.0f, 0.0f, 50, 56}))
-        {
-            SaveBoard(board);
-            saveBanner.Start();
-        }
-        else if (!CheckCollisionPointRec(mousePos, {(float)boardX, (float)boardY, 8.0f * boardSquareSize, 8.0f * boardSquareSize}))
-        {
-            LOG_INFO("Out of board");
-            selectedPiece = {-1, -1};
-        }
-        else if (selectedPiece.x != -1 || selectedPiece.y != -1)
-        {
-            Vector2i movePos = {(int)boardMousePos.x, (int)boardMousePos.y};
-            if (board.cells[movePos].first != (board.isWhiteTurn ? PieceColor::White : PieceColor::Black))
-            {
-                bool isEating = IsEating(board, selectedPiece, movePos);
-                LOG_INFO("Changing piece position");
-                if (MovePiece(board, selectedPiece, movePos))
-                {
-                    if (isEating)
-                    {
-                        // TODO: Fix en-passant to spawn particles from eaten piece
-                        eatParticleEmitter.SetSpawnPosition({boardX + movePos.x * boardSquareSize + boardSquareSize / 2.0f, boardY + movePos.y * boardSquareSize + boardSquareSize / 2.0f});
-                        eatParticleEmitter.EmitNow(16);
-                    }
+	if (askQueening)
+	{
+		if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
+		{
+			Vector2i askPos = {(GetScreenWidth() - 4 * boardSquareSize) / 2, (GetScreenHeight() - boardSquareSize) / 2};
 
-                    board.isWhiteTurn = !board.isWhiteTurn;
-                    board.whiteLegalMoves.clear();
-                    board.blackLegalMoves.clear();
-                    board.whiteLegalMoves = GetLegalMoves(board, PieceColor::White);
-                    board.blackLegalMoves = GetLegalMoves(board, PieceColor::Black);
-                    RemoveCheckMoves(board);
-                }
-                selectedPiece = {-1, -1};
-            }
-        }
-    }
+			if (CheckCollisionPointRec(mousePos, {(float)askPos.x, (float)askPos.y, 4.0f * boardSquareSize, (float)boardSquareSize}))
+			{
+				Vector2 normalizedMousePos =  {mousePos.x - askPos.x, mousePos.y - askPos.y};
+
+				int index = (int)(normalizedMousePos.x / boardSquareSize);
+
+				board.cells[queeningMovePos].second = (PieceType)(index + 1);
+
+				board.isWhiteTurn = !board.isWhiteTurn;
+				board.whiteLegalMoves.clear();
+				board.blackLegalMoves.clear();
+				board.whiteLegalMoves = GetLegalMoves(board, PieceColor::White);
+				board.blackLegalMoves = GetLegalMoves(board, PieceColor::Black);
+				RemoveCheckMoves(board);
+
+				queeningMovePos = {-1, -1};
+				askQueening = false;
+			}
+
+		}
+	}
+	else
+	{
+		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && (!settings || mousePos.x < GetScreenWidth() - 500))
+		{ 
+			Vector2 boardMousePos = {(mousePos.x - boardX) / boardSquareSize, (mousePos.y - boardY) / boardSquareSize};
+			if (CheckCollisionPointRec(mousePos, {(float)boardX, (float)boardY, 8.0f * boardSquareSize, 8.0f * boardSquareSize}))
+			{
+				Vector2i boardPosi = {(int)boardMousePos.x, (int)boardMousePos.y};
+				if ((selectedPiece.x == -1 && selectedPiece.y == -1) || board.cells[boardPosi].first == (board.isWhiteTurn ? PieceColor::White : PieceColor::Black))
+				{
+					LOG_INFO("Selecting piece");
+					selectedPiece = boardPosi;
+					std::pair<PieceColor, PieceType> selected = board.cells[selectedPiece];
+					if (selected.second == PieceType::None || (board.isWhiteTurn && selected.first == PieceColor::Black) || (!board.isWhiteTurn && selected.first == PieceColor::White))
+						selectedPiece = {-1, -1};
+				}
+			}
+		}
+
+		if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && (!settings || mousePos.x < GetScreenWidth() - 500))
+		{
+			Vector2 boardMousePos = {(mousePos.x - boardX) / boardSquareSize, (mousePos.y - boardY) / boardSquareSize};
+			if (CheckCollisionPointRec(mousePos, {GetScreenWidth() - 50.0f, 0.0f, 50, 56})) // Save button
+			{
+				SaveBoard(board);
+				saveBanner.Start();
+			}
+			else if (!CheckCollisionPointRec(mousePos, {(float)boardX, (float)boardY, 8.0f * boardSquareSize, 8.0f * boardSquareSize}))
+			{
+				LOG_INFO("Out of board");
+				selectedPiece = {-1, -1};
+			}
+			else if (selectedPiece.x != -1 || selectedPiece.y != -1)
+			{
+				Vector2i movePos = {(int)boardMousePos.x, (int)boardMousePos.y};
+				if (board.cells[movePos].first != (board.isWhiteTurn ? PieceColor::White : PieceColor::Black))
+				{
+					bool isEating = IsEating(board, selectedPiece, movePos);
+					bool enPassantEating = board.cells[movePos].first == PieceColor::NoColor;
+					bool isQueening = IsQueening(board, selectedPiece, movePos);
+					LOG_INFO("Changing piece position");
+					if (MovePiece(board, selectedPiece, movePos))
+					{
+						if (isEating)
+						{
+							Vector2i particleSpawnPos = movePos;
+							if (enPassantEating)
+							{
+								if (movePos.y == 2)
+									particleSpawnPos.y += 1;
+								else
+									particleSpawnPos.y -= 1;
+							}
+
+							eatParticleEmitter.SetSpawnPosition({boardX + particleSpawnPos.x * boardSquareSize + boardSquareSize / 2.0f, boardY + particleSpawnPos.y * boardSquareSize + boardSquareSize / 2.0f});
+							eatParticleEmitter.EmitNow(16);
+						}
+
+						if (isQueening)
+						{
+							askQueening = true;
+							queeningMovePos = movePos;
+						}
+						else
+						{
+							board.isWhiteTurn = !board.isWhiteTurn;
+							board.whiteLegalMoves.clear();
+							board.blackLegalMoves.clear();
+							board.whiteLegalMoves = GetLegalMoves(board, PieceColor::White);
+							board.blackLegalMoves = GetLegalMoves(board, PieceColor::Black);
+							RemoveCheckMoves(board);
+						}
+					}
+					selectedPiece = {-1, -1};
+				}
+			}
+		}
+    } 
+
+	if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
+	{
+		if (CheckCollisionPointRec(mousePos, {0, 0, 50, 56})) // Go back to main menu
+			ScreenManager::ChangeScreen(MenuScreen::GetScreen());
+	}
+
     if (saveBanner.IsDone())
         saveBanner = BannerAnimation(4.0f, "SAVED", {(float)GetScreenWidth() + 100.0f, 70.0f}, {-100.0f, 70.0f}, 20, WHITE, RED);
     saveBanner.Update(dt);
@@ -234,6 +292,35 @@ void Render()
         if (board.blackLegalMoves.size() == 0)
             DrawText("Stalemate", 20, 200, 32, {32, 32, 32, 255});
     }
+
+	if (askQueening)
+	{
+		DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Globals::Colors::DIALOG_SHADE);
+
+		Rectangle dialogRec = {(GetScreenWidth() - 4.0f * boardSquareSize) / 2.0f, (GetScreenHeight() - boardSquareSize) / 2.0f, 4.0f * boardSquareSize, (float)boardSquareSize };
+
+		DrawRectangleRec(dialogRec, Globals::Colors::DIALOG_BACKGROUND);
+		Vector2 mousePos = GetMousePosition();
+		if (CheckCollisionPointRec(mousePos, dialogRec))
+		{
+				Vector2 normalizedMousePos =  {mousePos.x - dialogRec.x, mousePos.y - dialogRec.y};
+				int index = (int)(normalizedMousePos.x / boardSquareSize);
+
+				DrawRectangleRec({dialogRec.x + index * boardSquareSize, dialogRec.y, (float)boardSquareSize, dialogRec.height}, Globals::Colors::DIALOG_HOVER);
+		}
+
+		if (board.isWhiteTurn)
+		{
+			Rectangle sourceRect = {whitePiecesTexture.width / 6.0f, 0.0f, whitePiecesTexture.width / 6.0f * 4.0f, (float)whitePiecesTexture.height};
+			DrawTexturePro(whitePiecesTexture, sourceRect, dialogRec, {0.0f, 0.0f}, 0.0f, WHITE);
+		}
+		else
+		{
+			Rectangle sourceRect = {blackPiecesTexture.width / 6.0f, 0.0f, blackPiecesTexture.width / 6.0f * 4.0f, (float)blackPiecesTexture.height};
+			DrawTexturePro(blackPiecesTexture, sourceRect, dialogRec, {0.0f, 0.0f}, 0.0f, WHITE);
+		}
+		DrawRectangleLinesEx(dialogRec, 3.0f, Globals::Colors::DIALOG_OUTLINE);
+	}
 
     // UI
 	// if (!settings)
@@ -332,16 +419,17 @@ void DrawBoard()
 
 void DrawPiece(int x, int y, PieceType type, PieceColor color)
 {
-    Rectangle sourceRect = {(int)type * 16.0f, 0.0f, 16.0f, 16.0f};
     Rectangle destRect = {(float)(boardX + x * boardSquareSize) + 2.0f, (float)(boardY + y * boardSquareSize), boardSquareSize - 4.0f, boardSquareSize - 4.0f};
     if (type != PieceType::None)
     {
         if (color == PieceColor::White)
-        {
+		{
+			Rectangle sourceRect = {(int)type * (whitePiecesTexture.width / 6.0f), 0.0f, whitePiecesTexture.width / 6.0f, (float)whitePiecesTexture.height};
             DrawTexturePro(whitePiecesTexture, sourceRect, destRect, {0.0f, 0.0f}, 0.0f, WHITE);
         }
         else if (color == PieceColor::Black)
         {
+			Rectangle sourceRect = {(int)type * (blackPiecesTexture.width / 6.0f), 0.0f, blackPiecesTexture.width / 6.0f, (float)blackPiecesTexture.height};
             DrawTexturePro(blackPiecesTexture, sourceRect, destRect, {0.0f, 0.0f}, 0.0f, WHITE);
         }
     }

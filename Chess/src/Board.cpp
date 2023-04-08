@@ -89,8 +89,8 @@ bool MovePiece(Board& board, Vector2i from, Vector2i to)
 				board.pawnMovedTwice = to;
 			else
 				board.pawnMovedTwice = {-1, -1};
-			if (to.y == 0 || to.y == 7)
-				board.cells[to].second = PieceType::Queen;
+			// if (to.y == 0 || to.y == 7)
+			// 	board.cells[to].second = PieceType::Queen;
 		}
 
 		return true;
@@ -385,6 +385,29 @@ bool IsEating(Board& board, Vector2i from, Vector2i to)
 
     return false;
 
+}
+
+bool IsQueening(Board& board, Vector2i from, Vector2i to)
+{
+	if (board.cells[from].second != PieceType::Pawn)
+		return false;
+
+	if (board.cells[from].first == PieceColor::NoColor)
+		return false;
+
+	if (board.cells[from].first == PieceColor::Black)
+	{
+		if (from.y == 6 && to.y == 7)
+			return true;
+	}
+
+	if (board.cells[from].first == PieceColor::White)
+	{
+		if (from.y == 1 && to.y == 0)
+			return true;
+	}
+
+	return false;
 }
 
 

@@ -36,8 +36,8 @@ enum PieceType
 {
     Pawn,
     Knight,
-    Rook,
     Bishop,
+	Rook,
     Queen,
     King,
     None
@@ -73,6 +73,7 @@ bool IsLegalMove(std::vector<LegalMove> legalMoves, Vector2i from, Vector2i to);
 bool IsPossibleLegalMove(Board& board, PieceType type, PieceColor color, Vector2i from, Vector2i to);
 bool IsInCheck(Board& board, PieceColor color);
 bool IsEating(Board& board, Vector2i from, Vector2i to);
+bool IsQueening(Board& board, Vector2i from, Vector2i to);
 
 // Remove all moves that would lead to the king being eaten in the next move
 void RemoveCheckMoves(Board& board);
