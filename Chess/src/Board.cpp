@@ -617,6 +617,7 @@ bool LoadBoard(Board& board, std::string filename)
 
                 default:
                     LOG_WARN("Piece " + tmp + " is invalid");
+					type = PieceType::None;
                     break;
                 }
                 board.cells[{countX, countY}] = {color, type};
