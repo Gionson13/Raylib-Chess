@@ -17,8 +17,9 @@
 #include <raygui.h>
 
 #undef RAYGUI_IMPLEMENTATION            // Avoid including raygui implementation again
-#define GUI_FILE_DIALOG_IMPLEMENTATION
+#define GUI_WINDOW_FILE_DIALOG_IMPLEMENTATION
 #include "Utils/GuiFileDialog.h"
+
 
 namespace MenuScreen
 {
@@ -26,7 +27,7 @@ namespace MenuScreen
 	static Rectangle loadRect;
 	static Rectangle settRect;
 	static Rectangle exitRect;
-	static GuiFileDialogState fileDialogState;
+	static GuiWindowFileDialogState fileDialogState;
 	static bool settings;
 
 	static Layer settingsLayer;
@@ -54,7 +55,7 @@ void Load()
 	loadRect = {100, 270, 200, 50};
 	settRect = {100, 340, 200, 50};
 	exitRect = {100, 410, 200, 50};
-	fileDialogState = InitGuiFileDialog((std::string(GetWorkingDirectory()) + "/Assets/Saves").c_str());
+	fileDialogState = InitGuiWindowFileDialog((std::string(GetWorkingDirectory()) + "/Assets/Saves").c_str());
 	settings = false;
 
 	settingsLayer = SettingsLayer::GetLayer();
@@ -126,7 +127,7 @@ void Render()
 		settingsLayer.Render();
 	}
 
-	GuiFileDialog(&fileDialogState);
+	GuiWindowFileDialog(&fileDialogState);
 
 	if (Variables::RenderFPS)
 		DrawFPS(0, 0);

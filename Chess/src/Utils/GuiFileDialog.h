@@ -1,13 +1,13 @@
 /*******************************************************************************************
 *
-*   FileDialog v1.2 - Modal file dialog to open/save files
+*   Window File Dialog v1.2 - Modal file dialog to open/save files
 *
 *   MODULE USAGE:
-*       #define GUI_FILE_DIALOG_IMPLEMENTATION
-*       #include "gui_file_dialog.h"
+*       #define GUI_WINDOW_FILE_DIALOG_IMPLEMENTATION
+*       #include "gui_window_file_dialog.h"
 *
-*       INIT: GuiFileDialogState state = InitGuiFileDialog();
-*       DRAW: GuiFileDialog(&state);
+*       INIT: GuiWindowFileDialogState state = GuiInitWindowFileDialog();
+*       DRAW: GuiWindowFileDialog(&state);
 *
 *   NOTE: This module depends on some raylib file system functions:
 *       - LoadDirectoryFiles()
@@ -18,7 +18,7 @@
 *
 *   LICENSE: zlib/libpng
 *
-*   Copyright (c) 2019-2022 Ramon Santamaria (@raysan5)
+*   Copyright (c) 2019-2023 Ramon Santamaria (@raysan5)
 *
 *   This software is provided "as-is", without any express or implied warranty. In no event
 *   will the authors be held liable for any damages arising from the use of this software.
@@ -39,11 +39,9 @@
 
 #include "raylib.h"
 
-#ifndef GUI_FILE_DIALOG_H
-#define GUI_FILE_DIALOG_H
+#ifndef GUI_WINDOW_FILE_DIALOG_H
+#define GUI_WINDOW_FILE_DIALOG_H
 
-#ifndef GUI_FILE_DIALOG_STATE_DEF
-#define GUI_FILE_DIALOG_STATE_DEF
 // Gui file dialog context data
 typedef struct {
 
@@ -79,9 +77,7 @@ typedef struct {
 
     bool saveFileMode;
 
-} GuiFileDialogState;
-
-#endif
+} GuiWindowFileDialogState;
 
 #ifdef __cplusplus
 extern "C" {            // Prevents name mangling of functions
@@ -105,21 +101,21 @@ extern "C" {            // Prevents name mangling of functions
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
 //----------------------------------------------------------------------------------
-GuiFileDialogState InitGuiFileDialog(const char *initPath);
-void GuiFileDialog(GuiFileDialogState *state);
+GuiWindowFileDialogState InitGuiWindowFileDialog(const char *initPath);
+void GuiWindowFileDialog(GuiWindowFileDialogState *state);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // GUI_FILE_DIALOG_H
+#endif // GUI_WINDOW_FILE_DIALOG_H
 
 /***********************************************************************************
 *
-*   GUI_FILE_DIALOG IMPLEMENTATION
+*   GUI_WINDOW_FILE_DIALOG IMPLEMENTATION
 *
 ************************************************************************************/
-#if defined(GUI_FILE_DIALOG_IMPLEMENTATION)
+#if defined(GUI_WINDOW_FILE_DIALOG_IMPLEMENTATION)
 
 #include "raygui.h"
 
@@ -157,7 +153,7 @@ FileInfo *dirFilesIcon = NULL;      // Path string + icon (for fancy drawing)
 // Internal Module Functions Definition
 //----------------------------------------------------------------------------------
 // Read files in new path
-static void ReloadDirectoryFiles(GuiFileDialogState *state);
+static void ReloadDirectoryFiles(GuiWindowFileDialogState *state);
 
 #if defined(USE_CUSTOM_LISTVIEW_FILEINFO)
 // List View control for files info with extended parameters
@@ -167,12 +163,12 @@ static int GuiListViewFiles(Rectangle bounds, FileInfo *files, int count, int *f
 //----------------------------------------------------------------------------------
 // Module Functions Definition
 //----------------------------------------------------------------------------------
-GuiFileDialogState InitGuiFileDialog(const char *initPath)
+GuiWindowFileDialogState InitGuiWindowFileDialog(const char *initPath)
 {
-    GuiFileDialogState state = { 0 };
+    GuiWindowFileDialogState state;
 
     // Init window data
-    state.windowBounds = (Rectangle){ GetScreenWidth()/2 - 440/2, GetScreenHeight()/2 - 310/2, 440, 310 };
+    state.windowBounds = (Rectangle){ (float)GetScreenWidth()/2.0f - 440.0f/2.0f, (float)GetScreenHeight()/2.0f - 310.0f/2.0f, 440.0f, 310.0f };
     state.windowActive = false;
     state.supportDrag = true;
     state.dragMode = false;
@@ -218,7 +214,7 @@ GuiFileDialogState InitGuiFileDialog(const char *initPath)
 }
 
 // Update and draw file dialog
-void GuiFileDialog(GuiFileDialogState *state)
+void GuiWindowFileDialog(GuiWindowFileDialogState *state)
 {
     if (state->windowActive)
     {
@@ -314,7 +310,8 @@ void GuiFileDialog(GuiFileDialogState *state)
 # if defined(USE_CUSTOM_LISTVIEW_FILEINFO)
         state->filesListActive = GuiListViewFiles((Rectangle){ state->position.x + 8, state->position.y + 48 + 20, state->windowBounds.width - 16, state->windowBounds.height - 60 - 16 - 68 }, fileInfo, state->dirFiles.count, &state->itemFocused, &state->filesListScrollIndex, state->filesListActive);
 # else
-        state->filesListActive = GuiListViewEx((Rectangle){ state->windowBounds.x + 8, state->windowBounds.y + 48 + 20, state->windowBounds.width - 16, state->windowBounds.height - 60 - 16 - 68 }, (const char**)dirFilesIcon, state->dirFiles.count, &state->itemFocused, &state->filesListScrollIndex, state->filesListActive);
+        state->itemFocused = GuiListViewEx((Rectangle){ state->windowBounds.x + 8, state->windowBounds.y + 48 + 20, state->windowBounds.width - 16, state->windowBounds.height - 60 - 16 - 68 }, 
+                      (const char**)dirFilesIcon, state->dirFiles.count, &state->filesListScrollIndex, &state->filesListActive, state->itemFocused);
 # endif
         GuiSetStyle(LISTVIEW, TEXT_ALIGNMENT, prevTextAlignment);
         GuiSetStyle(LISTVIEW, LIST_ITEMS_HEIGHT, prevElementsHeight);
@@ -356,7 +353,7 @@ void GuiFileDialog(GuiFileDialogState *state)
                 if (FileExists(TextFormat("%s/%s", state->dirPathText, state->fileNameText)))
                 {
                     // Select filename from list view
-                    for (int i = 0; i < state->dirFiles.count; i++)
+                    for (int i = 0; i < (int)state->dirFiles.count; i++)
                     {
                         if (TextIsEqual(state->fileNameText, state->dirFiles.paths[i]))
                         {
@@ -422,7 +419,7 @@ static inline int FileCompare(const char *d1, const char *d2, const char *dir)
 }
 
 // Read files in new path
-static void ReloadDirectoryFiles(GuiFileDialogState *state)
+static void ReloadDirectoryFiles(GuiWindowFileDialogState *state)
 {
     UnloadDirectoryFiles(state->dirFiles);
 
@@ -433,7 +430,7 @@ static void ReloadDirectoryFiles(GuiFileDialogState *state)
     for (int i = 0; i < MAX_DIRECTORY_FILES; i++) memset(dirFilesIcon[i], 0, MAX_ICON_PATH_LENGTH);
 
     // Copy paths as icon + fileNames into dirFilesIcon
-    for (int i = 0; i < state->dirFiles.count; i++)
+    for (int i = 0; i < (int)state->dirFiles.count; i++)
     {
         if (IsPathFile(state->dirFiles.paths[i]))
         {
@@ -466,11 +463,12 @@ static void ReloadDirectoryFiles(GuiFileDialogState *state)
 
 #if defined(USE_CUSTOM_LISTVIEW_FILEINFO)
 // List View control for files info with extended parameters
-static int GuiListViewFiles(Rectangle bounds, FileInfo *files, int count, int *focus, int *scrollIndex, int active)
+static int GuiListViewFiles(Rectangle bounds, FileInfo *files, int count, int *focus, int *scrollIndex, int *active)
 {
+    int result = 0;
     GuiState state = guiState;
     int itemFocused = (focus == NULL)? -1 : *focus;
-    int itemSelected = active;
+    int itemSelected = *active;
 
     // Check if we need a scroll bar
     bool useScrollBar = false;
@@ -614,7 +612,8 @@ static int GuiListViewFiles(Rectangle bounds, FileInfo *files, int count, int *f
     if (focus != NULL) *focus = itemFocused;
     if (scrollIndex != NULL) *scrollIndex = startIndex;
 
-    return itemSelected;
+    *active = itemSelected;
+    return result;
 }
 #endif // USE_CUSTOM_LISTVIEW_FILEINFO
 
