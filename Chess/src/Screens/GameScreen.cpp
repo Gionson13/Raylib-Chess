@@ -271,26 +271,44 @@ void Render()
     if (IsInCheck(board, PieceColor::White))
     {
         if (board.whiteLegalMoves.size() == 0)
-            DrawText("Checkmate", 20, 200, 32, {234, 234, 234, 255});
+		{
+			int text_length = MeasureText("Checkmate", 32);
+            DrawText("Checkmate", GetScreenWidth() / 2 - text_length / 2, boardY / 2 - 16, 32, Globals::Colors::WHITE_IN_CHECK);
+		}
         else
-            DrawText("Check", 50, 200, 32, {234, 234, 234, 255});
+		{
+			int text_length = MeasureText("Check", 32);
+			DrawText("Check", GetScreenWidth() / 2 - text_length / 2, boardY / 2 - 16, 32, Globals::Colors::WHITE_IN_CHECK);
+		}
     }
     else
     {
         if (board.whiteLegalMoves.size() == 0)
-            DrawText("Stalemate", 20, 200, 32, {234, 234, 234, 255});
+		{
+			int text_length = MeasureText("Stalemate", 32);
+			DrawText("Stalemate", GetScreenWidth() / 2 - text_length / 2, boardY / 2 - 16, 32,  Globals::Colors::WHITE_IN_CHECK);
+		}
     }
     if (IsInCheck(board, PieceColor::Black))
     {
         if (board.blackLegalMoves.size() == 0)
-            DrawText("Checkmate", 20, 200, 32, {32, 32, 32, 255});
+		{
+			int text_length = MeasureText("Checkmate", 32);
+			DrawText("Checkmate", GetScreenWidth() / 2 - text_length / 2, boardY / 2 - 16, 32, Globals::Colors::BLACK_IN_CHECK);
+		}
         else
-            DrawText("Check", 50, 200, 32, {32, 32, 32, 255});
+		{
+			int text_length = MeasureText("Check", 32);
+			DrawText("Check", GetScreenWidth() / 2 - text_length / 2, boardY / 2 - 16, 32, Globals::Colors::BLACK_IN_CHECK);
+		}
     }
     else
     {
         if (board.blackLegalMoves.size() == 0)
-            DrawText("Stalemate", 20, 200, 32, {32, 32, 32, 255});
+		{
+			int text_length = MeasureText("Stalemate", 32);
+			DrawText("Stalemate", GetScreenWidth() / 2 - text_length / 2, boardY / 2 - 16, 32, Globals::Colors::BLACK_IN_CHECK);
+		}
     }
 
 	if (askQueening)
@@ -381,7 +399,7 @@ void OnResize(int width, int height)
     if (height < width)
         boardSquareSize = (int)(height / 9.6f);
     else
-        boardSquareSize = width / 16;
+        boardSquareSize = width / 9.6f;
 
     boardX = (int)(width / 2 - 8 * boardSquareSize / 2);
     boardY = (int)(height / 2 - 8 * boardSquareSize / 2);

@@ -28,6 +28,9 @@ Globals
 		DIALOG_BACKGROUND   : color : #FFeeeeee;
 		DIALOG_OUTLINE      : color : #FF515151;
 		DIALOG_HOVER        : color : #FF42E351;
+
+		BLACK_IN_CHECK      : color : #FFA1A1A1;
+		WHITE_IN_CHECK      : color : #FFEAEAEA;
 	}
 
 	EatParticle

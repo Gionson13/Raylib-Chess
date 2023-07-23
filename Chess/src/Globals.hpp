@@ -57,6 +57,8 @@ namespace Globals
 		const Color DIALOG_BACKGROUND = {238, 238, 238, 255};
 		const Color DIALOG_OUTLINE = {81, 81, 81, 255};
 		const Color DIALOG_HOVER = {66, 227, 81, 255};
+		const Color BLACK_IN_CHECK = {161, 161, 161, 255};
+		const Color WHITE_IN_CHECK = {234, 234, 234, 255};
 	} // namespace Colors
 
 	namespace EatParticle
