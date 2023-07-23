@@ -13,6 +13,11 @@
 #include <raymath.h>
 #include <cmath>
 
+#ifdef _DEBUG
+#include <ctime>
+#include <iomanip>
+#endif
+
 #define RAYGUI_IMPLEMENTATION
 #include <raygui.h>
 
@@ -67,6 +72,20 @@ void Unload()
 
 void Update(float dt)
 {
+#ifdef _DEBUG
+	if (IsKeyPressed(KEY_S))
+	{
+    	auto time = std::time(nullptr);
+    	auto localtime = *std::localtime(&time);
+
+		std::ostringstream oss;
+		oss << std::put_time(&localtime, "%d-%m-%Y_%H-%M-%S");
+
+		std::string filename = "Screenshots/" + oss.str() + ".png";
+		TakeScreenshot(filename.c_str());
+	}
+#endif
+
 	if (!fileDialogState.windowActive && !settings)
 	{
 		if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
