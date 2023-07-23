@@ -51,10 +51,6 @@ namespace MenuScreen
 
 void Load()
 {
-	startRect = {100, 200, 200, 50};
-	loadRect = {100, 270, 200, 50};
-	settRect = {100, 340, 200, 50};
-	exitRect = {100, 410, 200, 50};
 	fileDialogState = InitGuiWindowFileDialog((std::string(GetWorkingDirectory()) + "/Assets/Saves").c_str());
 	settings = false;
 
@@ -116,7 +112,8 @@ static void RenderButton(const std::string& text, Rectangle rec)
 void Render()
 {
 	ClearBackground(Globals::Colors::BACKGROUND);
-	DrawText("Chess", 100, 50, 50, WHITE);
+    int text_width = MeasureText("Chess", 60);
+	DrawText("Chess", GetScreenWidth() / 2 - text_width / 2, 50, 60, WHITE);
 	RenderButton("Start game", startRect);
 	RenderButton("Load game", loadRect);
 	RenderButton("Settings", settRect);
@@ -136,6 +133,14 @@ void Render()
 void OnResize(int width, int height)
 {
 	settingsLayer.Resize(width, height);
+
+	float rects_x = width / 2.0f - 100.0f;
+	const float button_dist = 10.0f;
+
+	startRect = {rects_x, height / 2.0f - 3.0f * button_dist / 2.0f - 100.0f, 200, 50};
+	loadRect = {rects_x, height / 2.0f - button_dist / 2.0f - 50.0f, 200, 50};
+	settRect = {rects_x, height / 2.0f + button_dist / 2.0f, 200, 50};
+	exitRect = {rects_x, height / 2.0f + 3.0f * button_dist / 2.0f + 50.0f, 200, 50};
 }
 
 void RenderStartTransition(float time)
@@ -155,13 +160,14 @@ void RenderEndTransition(float time)
 	float progress = time / 2.0f;
 
 	float x = std::min(std::pow(progress, 3) * 4 + std::pow(progress, 2), 8.0f * std::pow(progress - 0.77f,2) + 0.65f);
-    
-	for (int i = 0; i < 6; i++)
+
+	int stripes_num = 7;
+	for (int i = 0; i < stripes_num; i++)
 	{
 		if (i % 2 == 0)
-			DrawRectangle(0, (int)(i * GetScreenHeight() / 6), (int)(x * GetScreenWidth()), (int)(GetScreenHeight() / 6) + 1, BLACK);
+			DrawRectangle(0, (int)(i * GetScreenHeight() / stripes_num), (int)(x * GetScreenWidth()), (int)(GetScreenHeight() / stripes_num) + 1, BLACK);
 		else
-			DrawRectangle(GetScreenWidth() - (int)(x * GetScreenWidth()), (int)(i * GetScreenHeight() / 6), (int)(x * GetScreenWidth()), (int)(GetScreenHeight() / 6) + 1, BLACK);
+			DrawRectangle(GetScreenWidth() - (int)(x * GetScreenWidth()), (int)(i * GetScreenHeight() / stripes_num), (int)(x * GetScreenWidth()), (int)(GetScreenHeight() / stripes_num) + 1, BLACK);
 	}
 }
 
