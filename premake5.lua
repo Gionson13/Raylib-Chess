@@ -2,8 +2,16 @@ workspace "Chess"
     language "C++"
     cppdialect "C++17"
     
-    architecture "x86_64"
     configurations { "Debug", "Release" }
+	platforms { "Desktop", "Web" }
+	defaultplatform "Desktop"
+
+	filter { "platforms:Desktop" }
+		architecture "x86_64"
+	filter { "platforms:Web" }
+		architecture "x86"
+
+    filter { }
 
     warnings "Extra"
 
@@ -20,25 +28,40 @@ workspace "Chess"
 
     filter { }
 
-    targetdir ("bin/%{prj.name}/%{cfg.longname}")
-    objdir ("obj/%{prj.name}/%{cfg.longname}")
+    targetdir ("bin/%{prj.name}/%{cfg.buildcfg}")
+    objdir ("obj/%{prj.name}/%{cfg.buildcfg}")
 
 project "Chess"
     kind "ConsoleApp"
     files "Chess/**"
 
-    includedirs {
-		"Chess/src",
-		"Dependencies/Difu/%{cfg.longname}/include",
-        "Dependencies/Raylib/%{cfg.system}/include",
-        "Dependencies/fmt/%{cfg.system}/include",
-    }
+	filter { "platforms:Desktop" }
+        includedirs {
+    		"Chess/src",
+            "Dependencies/Raylib/%{cfg.system}/include",
+            "Dependencies/fmt/%{cfg.system}/include",
+        }
 
-    libdirs { 
-		"Dependencies/Difu/%{cfg.longname}",
-        "Dependencies/Raylib/%{cfg.system}/lib",
-        "Dependencies/fmt/%{cfg.system}/lib"
-    }
+        libdirs { 
+            "Dependencies/Raylib/%{cfg.system}/lib",
+            "Dependencies/fmt/%{cfg.system}/lib"
+        }
+
+	filter { "platforms:Web" }
+		defines { "PLATFORM_WEB" }
+
+        includedirs {
+    		"Chess/src",
+            "Dependencies/Raylib/webassembly/include",
+            "Dependencies/fmt/%{cfg.system}/include",
+        }
+
+        libdirs { 
+            "Dependencies/Raylib/webassembly/lib",
+            "Dependencies/fmt/%{cfg.system}/lib"
+        }
+	
+	filter {}
 
 	prebuildcommands {
 		"~/Dev/c++/ResourceManager/bin/ResourceManager/Debug/ResourceManager Chess/Globals.txt -p rl -o Chess/src/Globals.hpp"
@@ -49,7 +72,7 @@ project "Chess"
 		linkoptions { "-static-libstdc++" } -- filesystem dll not linking
     
     filter { "system:Linux" }
-        links { "raylib", "fmt", "Difu" } -- , "m", "dl", "rt", "X11"
+        links { "raylib", "fmt" } -- , "m", "dl", "rt", "X11"
 
     filter {}
 

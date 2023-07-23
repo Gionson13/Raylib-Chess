@@ -3,6 +3,7 @@
 /bin
 /obj
 /compile_commands
+/Screenshots
 compile_commands.json
 Chess.make
 Makefile
